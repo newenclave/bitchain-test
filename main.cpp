@@ -5,10 +5,6 @@
 
 #include <functional>
 
-#define IS_BIG_ENDIAN    (*(const unsigned short *)("\000\001") == 1)
-#define IS_LITTLE_ENDIAN (*(const unsigned short *)("\000\001") == 0)
-#define IS_NETWORK_ORDER IS_BIG_ENDIAN
-
 struct host_byte_order {
     static bool is_big_endian( )
     {
@@ -90,9 +86,9 @@ struct byte_order<std::uint64_t, true> {
     }
 };
 
-struct net_endian
+struct endian
 {
-    net_endian( bool bigendian )
+    endian( bool bigendian )
     {
         if( bigendian ) {
             if( host_byte_order::is_big_endian( ) ) {
@@ -126,15 +122,15 @@ struct net_endian
     hton64_type value64;
 };
 
-struct big_endian: public net_endian {
+struct big_endian: public endian {
     big_endian( )
-        :net_endian(true)
+        :endian(true)
     { }
 };
 
-struct little_endian: public net_endian {
+struct little_endian: public endian {
     little_endian( )
-        :net_endian(false)
+        :endian(false)
     { }
 };
 
