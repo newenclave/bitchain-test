@@ -5,6 +5,8 @@
 
 #include <functional>
 
+#include "openssl/sha.h"
+
 struct host_byte_order {
     static bool is_big_endian( )
     {
@@ -145,6 +147,7 @@ std::ostream &bintohex( std::ostream &o, const std::string &data )
 
 int main( )
 {
+
     std::string   ser(15, '\0');
     little_endian le;
 
