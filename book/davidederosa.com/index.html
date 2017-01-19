@@ -1,0 +1,670 @@
+
+
+
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="http://schema.org/Blog">
+    <head>
+        
+
+
+
+
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<title>Davide De Rosa</title>
+
+<meta name="author" content="Davide De Rosa" />
+<meta name="description" content="Software enthusiast, spare-time musician, casual biker. Not to mention my talent for cooking spaghetti.">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="apple-mobile-web-app-title" content="keeshux">
+<meta name="google-site-verification" content="-Pof3b1_qR1iiTunLBZdJwz97Wh63qhs134ZIKNAwyY" />
+
+<!-- Twitter -->
+
+
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@keeshux" />
+<meta name="twitter:title" content="Davide De Rosa" />
+<meta name="twitter:url" content="http://davidederosa.com/" />
+<meta name="twitter:image" content="http://davidederosa.com/s/keeshux.png?1468962375" />
+
+
+<meta name="twitter:description" content="Software enthusiast, spare-time musician, casual biker. Not to mention my talent for cooking spaghetti." />
+
+<!-- Facebook -->
+
+<meta property="og:url" content="http://davidederosa.com/" />
+<meta property="og:title" content="Davide De Rosa" />
+<meta property="og:description" content="Software enthusiast, spare-time musician, casual biker. Not to mention my talent for cooking spaghetti." />
+<meta property="og:image" content="http://davidederosa.com/s/keeshux.png?1468962375" />
+
+<!-- Google+ -->
+
+<meta itemprop="name" content="Davide De Rosa" />
+<meta itemprop="description" content="Software enthusiast, spare-time musician, casual biker. Not to mention my talent for cooking spaghetti." />
+<meta itemprop="image" content="http://davidederosa.com/s/keeshux.png?1468962375" />
+
+<link rel="canonical" href="index.html" />
+<link rel="author" href="https://plus.google.com/+keeshux" />
+<link rel="alternate" href="feed.xml" type="application/atom+xml" title="Davide De Rosa" />
+<link rel="sitemap" href="sitemap.xml" type="application/xml" title="Sitemap" />
+
+
+
+<link rel="stylesheet" href="s/main.css@1468962375.css" />
+<link rel="stylesheet" href="s/main-mobile.css@1468962375.css" media="handheld, only screen and (max-device-width: 600px)" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Raleway:600,400" />
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" />
+
+<link rel="shortcut icon" href="s/favicon.ico@1468962375" />
+<link rel="apple-touch-icon" href="s/iphone-icon-precomposed.png@1468962375" />
+
+    </head>
+    <body>
+        <div id="container">
+            <header>
+                <nav id="menu">
+    <ul>
+        
+            
+            
+            <li>
+                
+                <a class="active" href="index.html">stories</a>
+                
+            </li>
+        
+            
+            
+            <li>
+                
+                <a href="work/index.html">work</a>
+                
+            </li>
+        
+            
+            
+            <li>
+                
+                <a href="about/index.html">about</a>
+                
+            </li>
+        
+    </ul>
+</nav>
+
+            </header>
+            <div id="stories" class="main-page">
+                <header>
+                    <h1><a href="index.html">Davide De Rosa</a></h1>
+                </header>
+                <main>
+                    
+
+
+<div id="intro">
+    <p>
+        <a href="https://twitter.com/keeshux"><img src="s/keeshux.png@1468962375" alt="A very dark and unlikely photo of me" /></a>
+        Software enthusiast, avid learner, spare-time musician, wannabe teacher, casual biker, poker player... and counting.<br />
+        — <strong><em>Factotum</em> is the word.</strong>
+    </p>
+    <p>
+        Author of the Bitcoin programming blog series <a href="basic-blockchain-programming.1.html">Basic Blockchain Programming</a>. Have a look at my printable <a href="resume/index.html">résumé</a>.
+    </p>
+    <p>
+        Not to mention my talent for cooking <em>spaghetti</em>.<br />
+        Stupidly proud to be a <em>nonsense</em> hero.
+    </p>
+</div>
+
+<div id="latest-posts">
+    
+<aside class="sharing sharing-buttons">
+    <div class="addthis_sharing_toolbox"></div>
+</aside>
+
+    
+    <h2>Latest stories <a href="feed.xml" title="Subscribe to my RSS feed" class="fa fa-rss"></a></h2>
+    
+    <!--
+    <ul>
+        
+        <li>projects</li>
+        
+        <li>apps</li>
+        
+        <li>courses</li>
+        
+        <li>basic blockchain programming</li>
+        
+    </ul>
+    -->
+    
+    <article class="post post-preview" itemscope itemtype="http://schema.org/Article">
+        <header>
+            
+<div class="post-icon">
+    <a href="basic-blockchain-programming/wallet-software/index.html">
+        
+        <img src="s/f/bitcoin/bitcoin-150.png" alt="Wallet software" />
+        
+    </a>
+</div>
+
+
+            <div>
+                <span class="post-date" itemprop="datepublished">Jun 23, 2015</span>
+                <h3 itemprop="name"><a href="basic-blockchain-programming/wallet-software/index.html" title="Read full story" itemprop="url">Wallet software</a></h3>
+                <div class="post-list post-categories">
+    in
+    
+    <a href="category/basic-blockchain-programming.html">basic blockchain programming</a>
+    
+</div>
+
+            </div>
+        </header>
+        <!--
+        <p>Commonly, Bitcoin users rely on clients called wallets to create transactions and interact with the p2p network. Even Bitcoin Core is a wallet itself, besides being the official software for mining. Other well-known wallets are Electrum, Hive etc. Here I’ll try to describe the components of a wallet.
+
+Data model
+
+These are the typical data structures that a wallet maintains internally. Most of them accomplish the core business of the wallet, that is building transactions and broadcasting them to the Bitcoin network. Things like change addresses or encryption are convenient features yet not mandatory for a fully working implementation.
+
+Keypairs
+
+In the last paragraphs about the Bitcoin network, you learned how to create a primitive wallet. Given an ECDSA keypair, a basic Bitcoin wallet is made of:
+
+
+  The WIF-encoded private key.
+  The Base58Check-encoded hash160 of the public key, i.e. the P2PKH address.
+
+
+Real wallets actually create many keypairs, but stick with a single one for the sake of simplicity. In a tiered context, the keypair is the foundation of our data model and will “hold” our coins.
+
+Blockchain
+
+The blockchain component determines if a wallet is thin or heavyweight. Heavyweight wallets like Bitcoin Core are backed by a full blockchain, whereas thin wallets like Electrum and Hive only need a part of it or none at all, thus being suitable for slow connections or devices with limited capabilities like smartphones.
+
+“Heavy” really means it. At the time of writing, a Bitcoin Core wallet would take about 40GB of disk space to allocate the full blockchain locally, which includes all broadcast Bitcoin transactions since the beginning of time. And increasing. Conveniently, a thin client is much faster under the assumption that a normal user is not interested in every transaction in Bitcoin history. Instead, it will only download relevant transactions, that is transactions in which the user appears as a sender or a receiver.
+
+Focus on keypairs again. If our wallet only deals with standard P2PKH transactions –and most do–, we can safely assume that:
+
+
+  The user is a receiver when his address appears in a transaction output script.
+  The user is a sender when his public key appears in a transaction input script.
+
+
+Let’s see why. Consider the typical P2PKH output script:
+
+OP_DUP
+OP_HASH160
+[hash160(public_key)]
+OP_EQUALVERIFY
+OP_CHECKSIG
+
+
+
+the typical P2PKH input script:
+
+[signature]
+[public_key]
+
+
+
+and the relevancy scan in pseudocode:
+
+outpoint = struct { txid, index };
+
+relevant_txs = {};  /* txid -&gt; tx */
+utxos = {};         /* outpoint */
+balance = 0;
+
+for (tx in blockchain.txs) {
+
+    /* 1 */
+    for (txout in tx.outputs) {
+        if (!is_p2pkh_output(txout.script)) {
+            continue;
+        }
+        if (txout.script contains hash160(keypair.public_key)) {
+            relevant_txs.add(tx);
+
+            outpoint = outpoint(tx.id, txout.index);
+            utxos.add(outpoint);
+            balance += txout.value;
+        }
+    }
+
+    /* 2 */
+    for (txin in tx.inputs) {
+        if (!is_p2pkh_input(txin.script)) {
+            continue;
+        }
+        if (txin.script contains keypair.public_key) {
+            relevant_txs.add(tx);
+
+            outpoint = txin.outpoint;
+            previous_tx = relevant_txs[outpoint.txid];
+            prev_txout = previous_tx.outputs[outpoint.index];
+            utxos.remove(outpoint);
+            balance -= prev_txout.value;
+        }
+    }
+}
+
+
+
+(1) If any P2PKH transaction output contains the hash160 of our public key –our Bitcoin address–, the transaction is relevant to our wallet. Such an output associates more coins to our wallet keypair and contributes to the output value of the wallet. Until it’s spent, the output is an element of the UTXO set of the wallet, therefore increasing the balance.
+
+(2) If any P2PKH transaction input contains our public key, the transaction is relevant to our wallet. Such a transaction input spends coins associated with our wallet keypair, specifically it spends the output referenced by the input outpoint. The previous output is removed from the UTXO set because outputs are always spent in their entirety. After the spend, the balance decreases.
+
+Incidentally, you may notice that the relevant transactions form the history of a wallet.
+
+UTXOs
+
+So, given a keypair, the two criteria dramatically cut down the search time for relevant transactions in the blockchain, be it local (heavyweight wallet) or remote (thin wallet). To build new transactions, though, we must track the UTXO set, which appears to be a bonus result of the scanning process. All transaction outputs are initially added to the UTXOs, but they’re later removed if reused in another transaction as input outpoints. The final set provides us with the available outpoints for building new transactions.
+
+We can also compute the wallet balance from the UTXOs:
+
+balance = 0;
+
+for (outpoint in utxos) {
+    unspent_tx = relevant_txs[outpoint.txid];
+    unspent_txout = unspent_tx.outputs[outpoint.index];
+    balance += unspent_txout.value;
+}
+
+
+
+Modularization
+
+From an architectural perspective, a wallet software can be split into 3 independent modules:
+
+
+  Signing module.
+  Public addresses module.
+  Networking module.
+
+
+Most wallets are essentially monolithic, others are hybrid in that they sign transactions in a separate module. TREZOR is a well-known example of hybrid wallet where the signing module is even pushed to an external device.
+
+Signing
+
+This module is the only one holding sensitive data: the private key(s). It receives an unsigned transaction and returns a signed one, ready to be published to the Bitcoin network. Since the signing task involves just ECDSA, the module can be -and often is- conveniently implemented in hardware. This arrangement allows for strong 2-factor authentication.
+
+
+
+Think of OTP (One-Time Password) devices, those handy password generators designed to fit in your keyring. OTPs are often used for private banking to generate a login token that is only valid within a short time period. The token is the second step you take to enter your bank account after entering your credentials, and additional tokens can be requested for particularly sensitive operations. Your brain (the credentials) and the OTP device (the token) together protect the account. You won’t be able to log in in case you miss any of the two.
+
+
+
+Now look at the TREZOR. The TREZOR signing device is also part of a 2-factor authentication scheme, because the ability to create a transaction depends on 2 physically separate modules: the TREZOR itself (for the ECDSA keys) and a networking/blockchain software running on desktop or mobile (for the UTXOs). The device receives an unsigned transaction and signs it after manual confirmation. Then, the signed transaction is sent back to the network-connected software and finally broadcast. Again, the device alone won’t be able to build transactions because it has zero knowledge of the blockchain. Likewise, a transaction cannot be signed by the networked software as it has no access to the private keys.
+
+Public addresses
+
+Private and public keys are strongly related, still they can live in completely different contexts. In fact, they’re loosely coupled by nature. That’s why a wallet may opt for a public addresses distribution module. However, in our single keypair scenario such a module would be overkill, because we would be distributing just one public address.
+
+Public-key distribution would only make sense after learning about deterministic wallets, which I won’t deal with in this series. Plus, most wallets have this module conveniently merged into the networking component, since public addresses need to be constantly monitored for incoming transactions.
+
+Networking
+
+The networking module would sit in the middle of the other two, and it’s also the controller module. It’s in charge of several, sometimes complicated tasks:
+
+
+  Connecting to the Bitcoin p2p network.
+  Synchronizing and keeping up with the blockchain.
+  Monitoring relevant transactions.
+  Publishing transactions.
+
+
+Especially task 1 and 2 can be a PITA, look at the vague protocol description for blockchain download. It’s no surprise that many wallet manifacturers -like Electrum and Mycelium- have chosen to set up their own centralized synchronization network. Thin wallets are severely affected by the overwhelming complexity of blockchain synchronization.
+
+Task 3 is described in the above paragraph about the blockchain model, and requires the knowledge of the public key of our keypair. With the public key we’re able to monitor/restore both incoming and outcoming P2PKH transactions. Most importantly, the relevant transactions history determines the UTXO set of the wallet, which we’ll need to build new transactions.
+
+Task 4 is definitely the easiest, unless a wallet is advanced enough to pick the best UTXOs according to coin selection heuristics. After gathering the UTXOs and composing the unsigned transaction, it’s transmitted to the signing module. The unsigned transaction is signed and returned to the networking module, which in turn announces it to the Bitcoin network. Finally, it waits for the transaction to be mined in the upcoming blocks of the blockchain.
+
+Goodbye!
+
+That’s all. From now on, you should be way more comfortable with how Bitcoin works under the hood. Of course there’s much more to uncover, so I’m particularly interested in what topics you’d love to know more about. That’s why your feedback is golden, let me know in the comments what you enjoyed or didn’t about this series.
+
+This is free work and I won’t explicitly beg for donations. I’d rather be glad if you take your time to spread the word and share these articles with your friends or on social networks. After all, Bitcoin is far from being mainstream and significantly counts on word of mouth.
+
+And remember, all the code is on my GitHub repository.
+
+Keep mining!
+
+ <a class="post-more" href="/basic-blockchain-programming/wallet-software/" title="Read full story">...</a></p>
+        -->
+    </article>
+    
+    <article class="post post-preview" itemscope itemtype="http://schema.org/Article">
+        <header>
+            
+<div class="post-icon">
+    <a href="basic-blockchain-programming/the-first-transaction-part-two/index.html">
+        
+        <img src="s/f/bitcoin/bitcoin-150.png" alt="The first transaction (pt. 2)" />
+        
+    </a>
+</div>
+
+
+            <div>
+                <span class="post-date" itemprop="datepublished">Jun 3, 2015</span>
+                <h3 itemprop="name"><a href="basic-blockchain-programming/the-first-transaction-part-two/index.html" title="Read full story" itemprop="url">The first transaction (pt. 2)</a></h3>
+                <div class="post-list post-categories">
+    in
+    
+    <a href="category/basic-blockchain-programming.html">basic blockchain programming</a>
+    
+</div>
+
+            </div>
+        </header>
+        <!--
+        <p>The first part covered the basics of transaction building, like creating outputs from the destination addresses and gathering the needed input value. The most complicated part was constructing a message for the input signature. Now that we have one, we’re going to generate a signature and finally a script for the transaction input. The last step is about packing all the stuff together.
+
+ <a class="post-more" href="/basic-blockchain-programming/the-first-transaction-part-two/" title="Read full story">...</a></p>
+        -->
+    </article>
+    
+    <article class="post post-preview" itemscope itemtype="http://schema.org/Article">
+        <header>
+            
+<div class="post-icon">
+    <a href="basic-blockchain-programming/the-first-transaction-part-one/index.html">
+        
+        <img src="s/f/bitcoin/bitcoin-150.png" alt="The first transaction (pt. 1)" />
+        
+    </a>
+</div>
+
+
+            <div>
+                <span class="post-date" itemprop="datepublished">Jun 3, 2015</span>
+                <h3 itemprop="name"><a href="basic-blockchain-programming/the-first-transaction-part-one/index.html" title="Read full story" itemprop="url">The first transaction (pt. 1)</a></h3>
+                <div class="post-list post-categories">
+    in
+    
+    <a href="category/basic-blockchain-programming.html">basic blockchain programming</a>
+    
+</div>
+
+            </div>
+        </header>
+        <!--
+        <p>The core business of the Bitcoin blockchain technology is definitely building transactions. I’ll show you the necessary steps to write your own P2PKH transactions, that is the kind of standard transactions you’ll find most often in the blockchain.
+
+ <a class="post-more" href="/basic-blockchain-programming/the-first-transaction-part-one/" title="Read full story">...</a></p>
+        -->
+    </article>
+    
+    <article class="post post-preview" itemscope itemtype="http://schema.org/Article">
+        <header>
+            
+<div class="post-icon">
+    <a href="basic-blockchain-programming/inside-transactions/index.html">
+        
+        <img src="s/f/bitcoin/bitcoin-150.png" alt="Inside transactions" />
+        
+    </a>
+</div>
+
+
+            <div>
+                <span class="post-date" itemprop="datepublished">Jun 1, 2015</span>
+                <h3 itemprop="name"><a href="basic-blockchain-programming/inside-transactions/index.html" title="Read full story" itemprop="url">Inside transactions</a></h3>
+                <div class="post-list post-categories">
+    in
+    
+    <a href="category/basic-blockchain-programming.html">basic blockchain programming</a>
+    
+</div>
+
+            </div>
+        </header>
+        <!--
+        <p>With all things in place, we’re ready to examine what Bitcoin transactions are made of. All the loose ends about scripts will be tied up, plus you’ll practice some C code to accomplish our main mission, that is writing a raw transaction by hand.
+
+ <a class="post-more" href="/basic-blockchain-programming/inside-transactions/" title="Read full story">...</a></p>
+        -->
+    </article>
+    
+    <article class="post post-preview" itemscope itemtype="http://schema.org/Article">
+        <header>
+            
+<div class="post-icon">
+    <a href="basic-blockchain-programming/standard-scripts/index.html">
+        
+        <img src="s/f/bitcoin/bitcoin-150.png" alt="Standard scripts" />
+        
+    </a>
+</div>
+
+
+            <div>
+                <span class="post-date" itemprop="datepublished">May 29, 2015</span>
+                <h3 itemprop="name"><a href="basic-blockchain-programming/standard-scripts/index.html" title="Read full story" itemprop="url">Standard scripts</a></h3>
+                <div class="post-list post-categories">
+    in
+    
+    <a href="category/basic-blockchain-programming.html">basic blockchain programming</a>
+    
+</div>
+
+            </div>
+        </header>
+        <!--
+        <p>I told you what a script is, but not exactly what it’s needed for. By the way, in the article about transaction processing I gave you an overview of how bitcoins move around by introducing transaction inputs and outputs. We’re about to connect the dots.
+
+ <a class="post-more" href="/basic-blockchain-programming/standard-scripts/" title="Read full story">...</a></p>
+        -->
+    </article>
+    
+    <article class="post post-preview" itemscope itemtype="http://schema.org/Article">
+        <header>
+            
+<div class="post-icon">
+    <a href="basic-blockchain-programming/bitcoin-script-language-part-two/index.html">
+        
+        <img src="s/f/bitcoin/bitcoin-150.png" alt="The Bitcoin Script language (pt. 2)" />
+        
+    </a>
+</div>
+
+
+            <div>
+                <span class="post-date" itemprop="datepublished">May 25, 2015</span>
+                <h3 itemprop="name"><a href="basic-blockchain-programming/bitcoin-script-language-part-two/index.html" title="Read full story" itemprop="url">The Bitcoin Script language (pt. 2)</a></h3>
+                <div class="post-list post-categories">
+    in
+    
+    <a href="category/basic-blockchain-programming.html">basic blockchain programming</a>
+    
+</div>
+
+            </div>
+        </header>
+        <!--
+        <p>In the first part I introduced the Script opcodes for constants and push data. We’re slowly approaching the scripts you’ll include in real transactions. Specifically, we’re bound to deal with hashes and ECDSA signatures at some point, that’s why Script has even opcodes for crypto functions.
+
+ <a class="post-more" href="/basic-blockchain-programming/bitcoin-script-language-part-two/" title="Read full story">...</a></p>
+        -->
+    </article>
+    
+    <article class="post post-preview" itemscope itemtype="http://schema.org/Article">
+        <header>
+            
+<div class="post-icon">
+    <a href="basic-blockchain-programming/bitcoin-script-language-part-one/index.html">
+        
+        <img src="s/f/bitcoin/bitcoin-150.png" alt="The Bitcoin Script language (pt. 1)" />
+        
+    </a>
+</div>
+
+
+            <div>
+                <span class="post-date" itemprop="datepublished">May 25, 2015</span>
+                <h3 itemprop="name"><a href="basic-blockchain-programming/bitcoin-script-language-part-one/index.html" title="Read full story" itemprop="url">The Bitcoin Script language (pt. 1)</a></h3>
+                <div class="post-list post-categories">
+    in
+    
+    <a href="category/basic-blockchain-programming.html">basic blockchain programming</a>
+    
+</div>
+
+            </div>
+        </header>
+        <!--
+        <p>Script is a simple scripting language, as well as the core of Bitcoin transaction processing. If you ever wrote assembly code you’ll find this article very easy to understand –probably entertaining–, otherwise it might well be one of the most challenging. Keep focused!
+
+ <a class="post-more" href="/basic-blockchain-programming/bitcoin-script-language-part-one/" title="Read full story">...</a></p>
+        -->
+    </article>
+    
+    <article class="post post-preview" itemscope itemtype="http://schema.org/Article">
+        <header>
+            
+<div class="post-icon">
+    <a href="basic-blockchain-programming/scripts-in-transaction-processing/index.html">
+        
+        <img src="s/f/bitcoin/bitcoin-150.png" alt="Scripts in transaction processing" />
+        
+    </a>
+</div>
+
+
+            <div>
+                <span class="post-date" itemprop="datepublished">May 15, 2015</span>
+                <h3 itemprop="name"><a href="basic-blockchain-programming/scripts-in-transaction-processing/index.html" title="Read full story" itemprop="url">Scripts in transaction processing</a></h3>
+                <div class="post-list post-categories">
+    in
+    
+    <a href="category/basic-blockchain-programming.html">basic blockchain programming</a>
+    
+</div>
+
+            </div>
+        </header>
+        <!--
+        <p>With some cryptography fundamentals and serialization practice under your belt, you should be more comfortable as we approach Bitcoin transactions. Well, scripts are the last step in the path. Here I’ll give an overview of their role in transaction processing.
+
+ <a class="post-more" href="/basic-blockchain-programming/scripts-in-transaction-processing/" title="Read full story">...</a></p>
+        -->
+    </article>
+    
+    <article class="post post-preview" itemscope itemtype="http://schema.org/Article">
+        <header>
+            
+<div class="post-icon">
+    <a href="basic-blockchain-programming/network-interoperability-part-two/index.html">
+        
+        <img src="s/f/bitcoin/bitcoin-150.png" alt="Network interoperability (pt. 2)" />
+        
+    </a>
+</div>
+
+
+            <div>
+                <span class="post-date" itemprop="datepublished">May 14, 2015</span>
+                <h3 itemprop="name"><a href="basic-blockchain-programming/network-interoperability-part-two/index.html" title="Read full story" itemprop="url">Network interoperability (pt. 2)</a></h3>
+                <div class="post-list post-categories">
+    in
+    
+    <a href="category/basic-blockchain-programming.html">basic blockchain programming</a>
+    
+</div>
+
+            </div>
+        </header>
+        <!--
+        <p>Here we are, finally ready to bring ECDSA keys to the real blockchain world. This post will describe the blockchain objects we send and receive bitcoins with, namely keys and addresses. Eventually, you’ll be able to generate the most essential Bitcoin wallet.
+
+ <a class="post-more" href="/basic-blockchain-programming/network-interoperability-part-two/" title="Read full story">...</a></p>
+        -->
+    </article>
+    
+    <article class="post post-preview" itemscope itemtype="http://schema.org/Article">
+        <header>
+            
+<div class="post-icon">
+    <a href="basic-blockchain-programming/network-interoperability-part-one/index.html">
+        
+        <img src="s/f/bitcoin/bitcoin-150.png" alt="Network interoperability (pt. 1)" />
+        
+    </a>
+</div>
+
+
+            <div>
+                <span class="post-date" itemprop="datepublished">May 14, 2015</span>
+                <h3 itemprop="name"><a href="basic-blockchain-programming/network-interoperability-part-one/index.html" title="Read full story" itemprop="url">Network interoperability (pt. 1)</a></h3>
+                <div class="post-list post-categories">
+    in
+    
+    <a href="category/basic-blockchain-programming.html">basic blockchain programming</a>
+    
+</div>
+
+            </div>
+        </header>
+        <!--
+        <p>Often, the average bitcoiner is not aware that multiple blockchains exist. Most people transparently connect to the main network, because wallet software by default operates in the realm of real money. In fact, you’re going to discover 3 different Bitcoin networks with their own peculiarities.
+
+ <a class="post-more" href="/basic-blockchain-programming/network-interoperability-part-one/" title="Read full story">...</a></p>
+        -->
+    </article>
+    
+</div>
+
+<nav class="paginator">
+    <ul>
+        <li class="paginator-browser newer">
+            
+        </li><li class="paginator-browser home">
+            
+            
+        </li><li class="paginator-browser older">
+            
+            <a href="pages/2.html">Older <i class="fa fa-chevron-right"></i></a>
+            
+        </li>
+    </ul>
+</nav>
+
+
+                </main>
+                <footer id="page-footer">
+                    <ul id="social">
+    <li><a href="https://twitter.com/keeshux" title="Follow me on Twitter!" class="fa fa-twitter"></a></li>
+    <li><a href="https://github.com/keeshux" title="Browse my GitHub repository" class="fa fa-github"></a></li>
+    <li><a href="https://www.linkedin.com/in/davidederosa" title="See my LinkedIn profile" class="fa fa-linkedin-square"></a></li>
+    <li><a href="mailto:website@davidederosa.com" title="Send me an email" class="fa fa-edit"></a></li>
+    <li><a href="s/keeshux-gpg.txt" title="My GnuPG public key" class="fa fa-lock"></a></li>
+</ul>
+<p>
+    <a href="bitcoin:16w2AWamiH2SS68NYSMDcrbh5MnZ1c5eju" title="Donate in Bitcoin" rel="nofollow">Donate bitcoins</a> to support my work.<br />
+    <a href="bitcoin:16w2AWamiH2SS68NYSMDcrbh5MnZ1c5eju" title="Donate in Bitcoin" rel="nofollow" alt="Bitcoin address"><img id="bitcoin-qr" src="s/keeshux-bitcoin.svg" /></a>
+</p>
+<p>&copy; <a href="index.html">Davide De Rosa</a>. All rights reserved. <a title="Subscribe to my RSS feed" class="fa fa-rss-square" href="feed.xml"></a></p>
+
+                </footer>
+            </div>
+        </div>
+        <script type="text/javascript" src="s/main.js@1468962375" async="async"></script>
+        <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/javascript" src="http://s7.addthis.com/js/300/addthis_widget.js#pubid=ra-545ff75205bf1590" async="async"></script>
+        <script type="text/javascript">
+            var addthis_share = {
+                'templates': {
+                    'twitter': '{{title}} {{url}} via @keeshux'
+                }
+            };
+        </script>
+        
+    </body>
+</html>
