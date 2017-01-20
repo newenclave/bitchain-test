@@ -5,12 +5,18 @@
 #include <arpa/inet.h>
 
 #include <functional>
+#include <memory>
 
 #include "openssl/sha.h"
 #include "openssl/ripemd.h"
 
 #include "byte_order.h"
 #include "varint.h"
+
+#include <openssl/bn.h>
+#include <openssl/ec.h>
+#include <openssl/obj_mac.h>
+#include <openssl/ecdsa.h>
 
 using namespace bchain;
 
@@ -124,41 +130,69 @@ void ripemd169_digit( std::uint8_t *out, char *message, size_t len )
     RIPEMD160_Final( out, &ctx );
 }
 
+class bn_ctx {
+
+    BN_CTX *ctx_ = nullptr;
+
+public:
+
+    bn_ctx( )
+        :ctx_(BN_CTX_new( ))
+    {
+        if( ctx_ ) {
+            BN_CTX_start(ctx_);
+        }
+    }
+
+    ~bn_ctx( )
+    {
+        if( ctx_ ) {
+            BN_CTX_end(ctx_);
+            BN_CTX_free(ctx_);
+        }
+    }
+
+    BN_CTX *get( )
+    {
+        return ctx_;
+    }
+};
+
+EC_KEY *bbp_ec_new_keypair(const uint8_t *priv_bytes) {
+
+    EC_KEY *key;
+    BIGNUM *priv;
+    bn_ctx  ctx;
+    const EC_GROUP *group;
+    EC_POINT *pub;
+
+    /* init empty OpenSSL EC keypair */
+
+    key = EC_KEY_new_by_curve_name(NID_secp256k1);
+
+    /* set private key through BIGNUM */
+
+    priv = BN_new();
+    BN_bin2bn(priv_bytes, 32, priv);
+    EC_KEY_set_private_key(key, priv);
+
+    /* derive public key from private key and group */
+
+    group = EC_KEY_get0_group(key);
+    pub = EC_POINT_new(group);
+    EC_POINT_mul(group, pub, priv, NULL, NULL, ctx.get( ));
+    EC_KEY_set_public_key(key, pub);
+
+    /* release resources */
+
+    EC_POINT_free(pub);
+    BN_clear_free(priv);
+
+    return key;
+}
+
 int main( )
 {
-    uint8_t bytes[] = {
-        0x13, 0x9c, 0xfd, 0x7d,
-        0x80, 0x44, 0x6b, 0xa2,
-        0x20, 0xcc
-    };
-
-    typedef struct {
-        uint16_t fixed1;
-        uint64_t var2;
-        uint32_t fixed3;
-        uint8_t fixed4;
-    } foo_t;
-
-    little_endian le;
-    size_t len = 0;
-    size_t tmp = 0;
-    foo_t decoded;
-
-    decoded.fixed1 = le.v16.read( &bytes[len], &tmp );
-    len += tmp;
-    decoded.var2   = le.var.read( &bytes[len], &tmp );
-    len += tmp;
-    decoded.fixed3 = le.v32.read( &bytes[len], &tmp );
-    len += tmp;
-    decoded.fixed4 = le.v8.read( &bytes[len], &tmp );
-
-    std::cout << std::hex
-              << decoded.fixed1 << " "
-              << decoded.var2   << " "
-              << decoded.fixed3 << " "
-              << decoded.fixed4 << " "
-              << "\n";
-
     return 0;
 }
 

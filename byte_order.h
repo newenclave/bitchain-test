@@ -104,7 +104,6 @@ namespace bchain {
             }
             return v;
         }
-
     };
 
     template<>
