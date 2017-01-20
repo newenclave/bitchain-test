@@ -6,3 +6,7 @@ CONFIG -= qt
 SOURCES += main.cpp 
 
 LIBS += -lcrypto
+
+HEADERS += \
+    byte_order.h \
+    varint.h

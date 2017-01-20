@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <climits>
 #include <sys/types.h>
 #include <arpa/inet.h>
 
@@ -7,86 +8,10 @@
 
 #include "openssl/sha.h"
 
-struct host_byte_order {
-    static bool is_big_endian( )
-    {
-        typedef const unsigned short const_ushort;
-        return (*reinterpret_cast<const_ushort *>("\001") == 0x0100);
-    }
+#include "byte_order.h"
+#include "varint.h"
 
-    static bool is_little_endian( )
-    {
-        return !is_big_endian( );
-    }
-};
-
-template<typename T, bool Swap>
-struct byte_order;
-
-template<typename T>
-struct byte_order<T, false> {
-    typedef T value_type;
-    static T value( T v )
-    {
-        return v;
-    }
-};
-
-template <typename T>
-struct byte_order<T, true> {
-
-    typedef T value_type;
-    static  T value( T v )
-    {
-        const std::uint8_t *d = reinterpret_cast<const std::uint8_t *>(&v);
-
-        std::uint8_t block[sizeof(value_type)];
-
-        for( unsigned i=0; i < sizeof(value_type); i++ ) {
-            block[i] = d[sizeof(value_type) - 1 - i];
-        }
-        return *reinterpret_cast<T *>(&block[0]);
-    }
-};
-
-template<>
-struct byte_order<std::uint16_t, true> {
-    typedef std::uint16_t value_type;
-    static value_type value( value_type v )
-    {
-        return ( ( v & 0xff00 ) >> 8 ) |
-               ( ( v & 0x00ff ) << 8 ) ;
-    }
-
-};
-
-template<>
-struct byte_order<std::uint32_t, true> {
-    typedef std::uint32_t value_type;
-    static value_type value( value_type v )
-    {
-        return ( ( v & 0xff000000 ) >> 24 ) |
-               ( ( v & 0x00ff0000 ) >>  8 ) |
-               ( ( v & 0x0000ff00 ) <<  8 ) |
-               ( ( v & 0x000000ff ) << 24 ) ;
-    }
-};
-
-template<>
-struct byte_order<std::uint64_t, true> {
-    typedef std::uint64_t value_type;
-    static value_type value( value_type v )
-    {
-        return ( ( v & 0xff00000000000000 ) >> 56) |
-               ( ( v & 0x00ff000000000000 ) >> 40) |
-               ( ( v & 0x0000ff0000000000 ) >> 24) |
-               ( ( v & 0x000000ff00000000 ) >>  8) |
-               ( ( v & 0x00000000ff000000 ) <<  8) |
-               ( ( v & 0x0000000000ff0000 ) << 24) |
-               ( ( v & 0x000000000000ff00 ) << 40) |
-               ( ( v & 0x00000000000000ff ) << 56) ;
-    }
-};
+using namespace bchain;
 
 struct endian
 {
@@ -148,22 +73,19 @@ std::ostream &bintohex( std::ostream &o, const std::string &data )
 int main( )
 {
 
-    std::string   ser(15, '\0');
-    little_endian le;
+    std::uint8_t bo[sizeof(std::uint64_t) * 2];
 
-    std::uint8_t  n8  = 0x01;
-    std::uint16_t n16 = 0x4523;
-    std::uint32_t n32 = 0xcdab8967;
-    std::uint64_t n64 = 0xdebc9a78563412ef;
+    varint<false> ll;
+    varint<true>  bb;
 
-    ser[0] = n8;
-    *(uint16_t *)(&ser[1]) = le.value16(n16);
-    *(uint32_t *)(&ser[3]) = le.value32(n32);
-    *(uint64_t *)(&ser[7]) = le.value64(n64);
+    auto lw = ll.write( 12345, bo );
+    auto bw = bb.write( 123456, bo + lw );
 
-    bintohex(std::cout, ser);
+    size_t len = 0;
+    std::cout << ll.read(&bo[len], &len) << "\n";
+    std::cout << bb.read(&bo[len], &len) << "\n";
 
-    std::cout << std::endl;
+    std::cout << lw << " " << bw << "\n";
 
     return 0;
 }
