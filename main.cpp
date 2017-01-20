@@ -15,38 +15,69 @@ using namespace bchain;
 
 struct endian
 {
+private:
+
+    template <typename T>
+    struct val{
+
+        typedef T      (* convert_type)(T);
+        typedef size_t (* write_type)(T, std::uint8_t *);
+        typedef T      (* read_type)(const std::uint8_t *, size_t *);
+
+        convert_type  value;
+        write_type    write;
+        read_type     read;
+    };
+
+    template <bool Val>
+    void set( )
+    {
+        typedef byte_order<std::uint16_t, Val> bytes16;
+        typedef byte_order<std::uint32_t, Val> bytes32;
+        typedef byte_order<std::uint64_t, Val> bytes64;
+        typedef varint<Val>                    bytesv;
+
+        v16.value  = &bytes16::value;
+        v16.write  = &bytes16::template write<std::uint8_t>;
+        v16.read   = &bytes16::template read<std::uint8_t>;
+
+        v32.value  = &bytes32::value;
+        v32.write  = &bytes32::template write<std::uint8_t>;
+        v32.read   = &bytes32::template read<std::uint8_t>;
+
+        v64.value  = &bytes64::value;
+        v64.write  = &bytes64::template write<std::uint8_t>;
+        v64.read   = &bytes64::template read<std::uint8_t>;
+
+        vvar.value = &bytesv::value;
+        vvar.write = &bytesv::template write<std::uint8_t>;
+        vvar.read  = &bytesv::template read<std::uint8_t>;
+    }
+
+public:
+
     endian( bool bigendian )
     {
         if( bigendian ) {
             if( host_byte_order::is_big_endian( ) ) {
-                value16 = &byte_order<std::uint16_t, false>::value;
-                value32 = &byte_order<std::uint32_t, false>::value;
-                value64 = &byte_order<std::uint64_t, false>::value;
+                set<false>( );
             } else {
-                value16 = &byte_order<std::uint16_t,  true>::value;
-                value32 = &byte_order<std::uint32_t,  true>::value;
-                value64 = &byte_order<std::uint64_t,  true>::value;
+                set<true>( );
             }
         } else {
             if( host_byte_order::is_big_endian( ) ) {
-                value16 = &byte_order<std::uint16_t,  true>::value;
-                value32 = &byte_order<std::uint32_t,  true>::value;
-                value64 = &byte_order<std::uint64_t,  true>::value;
+                set<true>( );
             } else {
-                value16 = &byte_order<std::uint16_t, false>::value;
-                value32 = &byte_order<std::uint32_t, false>::value;
-                value64 = &byte_order<std::uint64_t, false>::value;
+                set<false>( );
             }
         }
     }
 
-    typedef std::uint16_t ( * hton16_type )( std::uint16_t );
-    typedef std::uint32_t ( * hton32_type )( std::uint32_t );
-    typedef std::uint64_t ( * hton64_type )( std::uint64_t );
+    val<std::uint16_t> v16;
+    val<std::uint32_t> v32;
+    val<std::uint64_t> v64;
+    val<std::uint64_t> vvar;
 
-    hton16_type value16;
-    hton32_type value32;
-    hton64_type value64;
 };
 
 struct big_endian: public endian {
@@ -74,18 +105,15 @@ int main( )
 {
 
     std::uint8_t bo[sizeof(std::uint64_t) * 2];
+    little_endian le;
 
-    varint<false> ll;
-    varint<true>  bb;
+    auto l1 = le.vvar.write( 12345, bo );
+    auto l2 = le.vvar.write( 12345678, bo + l1 );
 
-    auto lw = ll.write( 12345, bo );
-    auto bw = bb.write( 123456, bo + lw );
+    std::cout << l1 << " " << l2 << "\n";
 
-    size_t len = 0;
-    std::cout << ll.read(&bo[len], &len) << "\n";
-    std::cout << bb.read(&bo[len], &len) << "\n";
-
-    std::cout << lw << " " << bw << "\n";
+    std::cout << le.vvar.read( bo, &l1 ) << std::endl;
+    std::cout << le.vvar.read( bo + l1, &l2 ) << std::endl;
 
     return 0;
 }

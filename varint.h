@@ -17,6 +17,11 @@ namespace bchain {
             VI64 = 0xFF,
         };
 
+        static value_type value( value_type v )
+        {
+            return byte_order<std::uint64_t, Swap>::value( v );
+        }
+
         template <typename U>
         static size_t write( std::uint64_t v, U *out )
         {
