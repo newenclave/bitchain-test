@@ -7,6 +7,7 @@
 #include <functional>
 
 #include "openssl/sha.h"
+#include "openssl/ripemd.h"
 
 #include "byte_order.h"
 #include "varint.h"
@@ -32,10 +33,15 @@ private:
     template <bool Val>
     void set( )
     {
+        typedef byte_order<std::uint8_t,  Val> bytes8;
         typedef byte_order<std::uint16_t, Val> bytes16;
         typedef byte_order<std::uint32_t, Val> bytes32;
         typedef byte_order<std::uint64_t, Val> bytes64;
         typedef varint<Val>                    bytesv;
+
+        v8.value  = &bytes8::value;
+        v8.write  = &bytes8::template write<std::uint8_t>;
+        v8.read   = &bytes8::template read<std::uint8_t>;
 
         v16.value  = &bytes16::value;
         v16.write  = &bytes16::template write<std::uint8_t>;
@@ -49,9 +55,9 @@ private:
         v64.write  = &bytes64::template write<std::uint8_t>;
         v64.read   = &bytes64::template read<std::uint8_t>;
 
-        vvar.value = &bytesv::value;
-        vvar.write = &bytesv::template write<std::uint8_t>;
-        vvar.read  = &bytesv::template read<std::uint8_t>;
+        var.value = &bytesv::value;
+        var.write = &bytesv::template write<std::uint8_t>;
+        var.read  = &bytesv::template read<std::uint8_t>;
     }
 
 public:
@@ -73,10 +79,11 @@ public:
         }
     }
 
+    val<std::uint8_t>  v8;
     val<std::uint16_t> v16;
     val<std::uint32_t> v32;
     val<std::uint64_t> v64;
-    val<std::uint64_t> vvar;
+    val<std::uint64_t> var;
 
 };
 
@@ -101,19 +108,56 @@ std::ostream &bintohex( std::ostream &o, const std::string &data )
     return o;
 }
 
+void sha256_digit( std::uint8_t *out, char *message, size_t len )
+{
+    SHA256_CTX ctx;
+    SHA256_Init(&ctx);
+    SHA256_Update( &ctx, message, len );
+    SHA256_Final( out, &ctx );
+}
+
+void ripemd169_digit( std::uint8_t *out, char *message, size_t len )
+{
+    RIPEMD160_CTX ctx;
+    RIPEMD160_Init(&ctx);
+    RIPEMD160_Update( &ctx, message, len );
+    RIPEMD160_Final( out, &ctx );
+}
+
 int main( )
 {
+    uint8_t bytes[] = {
+        0x13, 0x9c, 0xfd, 0x7d,
+        0x80, 0x44, 0x6b, 0xa2,
+        0x20, 0xcc
+    };
 
-    std::uint8_t bo[sizeof(std::uint64_t) * 2];
+    typedef struct {
+        uint16_t fixed1;
+        uint64_t var2;
+        uint32_t fixed3;
+        uint8_t fixed4;
+    } foo_t;
+
     little_endian le;
+    size_t len = 0;
+    size_t tmp = 0;
+    foo_t decoded;
 
-    auto l1 = le.vvar.write( 12345, bo );
-    auto l2 = le.vvar.write( 12345678, bo + l1 );
+    decoded.fixed1 = le.v16.read( &bytes[len], &tmp );
+    len += tmp;
+    decoded.var2   = le.var.read( &bytes[len], &tmp );
+    len += tmp;
+    decoded.fixed3 = le.v32.read( &bytes[len], &tmp );
+    len += tmp;
+    decoded.fixed4 = le.v8.read( &bytes[len], &tmp );
 
-    std::cout << l1 << " " << l2 << "\n";
-
-    std::cout << le.vvar.read( bo, &l1 ) << std::endl;
-    std::cout << le.vvar.read( bo + l1, &l2 ) << std::endl;
+    std::cout << std::hex
+              << decoded.fixed1 << " "
+              << decoded.var2   << " "
+              << decoded.fixed3 << " "
+              << decoded.fixed4 << " "
+              << "\n";
 
     return 0;
 }

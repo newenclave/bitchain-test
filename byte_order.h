@@ -26,7 +26,7 @@ namespace bchain {
     template<typename T>
     struct byte_order<T, false> {
         typedef T value_type;
-        static T value( value_type v )
+        static value_type value( value_type v )
         {
             return v;
         }
@@ -105,6 +105,58 @@ namespace bchain {
             return v;
         }
 
+    };
+
+    template<>
+    struct byte_order<std::uint8_t, true>
+    {
+        typedef std::uint8_t value_type;
+        static value_type value( value_type v )
+        {
+            return v;
+        }
+
+        template <typename U>
+        static size_t write( value_type v, U *out )
+        {
+            *reinterpret_cast<std::uint8_t *>(out) = v;
+            return sizeof(value_type);
+        }
+
+        template <typename U>
+        static value_type read( const U *in, size_t *len = nullptr )
+        {
+            if( len ) {
+                *len = sizeof(value_type);
+            }
+            return *reinterpret_cast<const std::uint8_t *>(in);
+        }
+    };
+
+    template<>
+    struct byte_order<std::uint8_t, false>
+    {
+        typedef std::uint8_t value_type;
+        static value_type value( value_type v )
+        {
+            return v;
+        }
+
+        template <typename U>
+        static size_t write( value_type v, U *out )
+        {
+            *reinterpret_cast<std::uint8_t *>(out) = v;
+            return sizeof(value_type);
+        }
+
+        template <typename U>
+        static value_type read( const U *in, size_t *len = nullptr )
+        {
+            if( len ) {
+                *len = sizeof(value_type);
+            }
+            return *reinterpret_cast<const std::uint8_t *>(in);
+        }
     };
 
     template<>
