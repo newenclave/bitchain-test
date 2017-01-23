@@ -152,6 +152,10 @@ int main( )
 
     std::cout << chk << "\n";
 
+
+    std::cout << base58::encode_check( "Hello!", 6 ) << "\n";
+
+
     return 0;
 }
 

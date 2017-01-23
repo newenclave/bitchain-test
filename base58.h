@@ -5,6 +5,8 @@
 #include <cstdint>
 #include <memory.h>
 
+#include "hash.h"
+
 namespace bchain {
 
     struct base58 {
@@ -151,6 +153,45 @@ namespace bchain {
             }
             return 0;
         }
+
+        template <typename U>
+        static
+        std::string encode_check( const U *sources, size_t len )
+        {
+            std::string res(encoded_size( len ) + 4, 0);
+            size_t res_len =
+                    encode_check( reinterpret_cast<std::uint8_t *>(&res[0]),
+                                  sources, len );
+            res.resize( res_len );
+            return res;
+        }
+
+
+        template <typename U>
+        static
+        size_t encode_check( std::uint8_t *dst, const U *sources, size_t len )
+        {
+            const std::uint8_t * src =
+                    reinterpret_cast<const std::uint8_t *>(sources);
+
+            std::string tmp;
+            tmp.reserve( len + 4 );
+            tmp.assign( src, src + len );
+
+            tmp.resize( tmp.size( ) + 4 );
+
+            std::uint8_t digit[hash::sha256::digit_length];
+            hash::sha256::get( digit, sources, len );
+
+            tmp[len + 0] = digit[0];
+            tmp[len + 1] = digit[1];
+            tmp[len + 2] = digit[2];
+            tmp[len + 3] = digit[3];
+
+            size_t res_len = encode( dst, tmp.c_str( ), tmp.size( ) );
+            return res_len;
+        }
+
 
     private:
 
