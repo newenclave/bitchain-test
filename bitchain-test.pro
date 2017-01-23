@@ -11,7 +11,8 @@ HEADERS += \
     byte_order.h \
     varint.h \
     base58.h \
-    hash.h
+    hash.h \
+    crypto.h
 
 DISTFILES += \
     test.py

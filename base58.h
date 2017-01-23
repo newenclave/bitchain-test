@@ -47,7 +47,8 @@ namespace bchain {
         static
         int decode( std::uint8_t *dst, const U *sources, size_t len )
         {
-            auto src = reinterpret_cast<const std::uint8_t *>(sources);
+            const std::uint8_t * src =
+                    reinterpret_cast<const std::uint8_t *>(sources);
             *dst = '\0';
 
             if( len > 0 ) {
@@ -109,7 +110,8 @@ namespace bchain {
         static
         size_t encode( std::uint8_t *dst, const U *sources, size_t len )
         {
-            auto src = reinterpret_cast<const std::uint8_t *>(sources);
+            const std::uint8_t * src =
+                    reinterpret_cast<const std::uint8_t *>(sources);
             *dst = '\0';
             if( len > 0 ) {
 

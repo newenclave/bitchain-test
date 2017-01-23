@@ -11,7 +11,9 @@ namespace bchain {
         static bool is_big_endian( )
         {
             typedef const unsigned short const_ushort;
-            return (*reinterpret_cast<const_ushort *>("\001") == 0x0100);
+            static bool res =
+                    (*reinterpret_cast<const_ushort *>("\001") == 0x0100);
+            return res;
         }
 
         static bool is_little_endian( )
