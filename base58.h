@@ -192,7 +192,6 @@ namespace bchain {
             return res_len;
         }
 
-
     private:
 
         static std::uint8_t *copy_of_range( const std::uint8_t *src,
