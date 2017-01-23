@@ -29,17 +29,15 @@ namespace bchain {
             if( v < VI16 ) {
                 *o = v & 0xFF;
                 return 1;
+            } else if( v <= UINT16_MAX ) {
+                *o = VI16;
+                return byte_order<std::uint16_t, Swap>::write(v, o + 1) + 1;
+            } else if( v <= UINT32_MAX ) {
+                *o = VI32;
+                return byte_order<std::uint32_t, Swap>::write(v, o + 1) + 1;
             } else {
-                if( v <= UINT16_MAX ) {
-                    *o = VI16;
-                    return byte_order<std::uint16_t, Swap>::write(v, o + 1) + 1;
-                } else if( v <= UINT32_MAX ) {
-                    *o = VI32;
-                    return byte_order<std::uint32_t, Swap>::write(v, o + 1) + 1;
-                } else {
-                    *o = VI64;
-                    return byte_order<std::uint64_t, Swap>::write(v, o + 1) + 1;
-                }
+                *o = VI64;
+                return byte_order<std::uint64_t, Swap>::write(v, o + 1) + 1;
             }
         }
 

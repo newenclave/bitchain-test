@@ -10,7 +10,8 @@ LIBS += -lcrypto
 HEADERS += \
     byte_order.h \
     varint.h \
-    base58.h
+    base58.h \
+    hash.h
 
 DISTFILES += \
     test.py

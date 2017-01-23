@@ -43,11 +43,11 @@ namespace bchain {
             return tmp;
         }
 
+        template <typename U>
         static
-        int decode( std::uint8_t *dst, const std::uint8_t *src, size_t len )
+        int decode( std::uint8_t *dst, const U *sources, size_t len )
         {
-            //size_t len = strlen((const char*)src);
-
+            auto src = reinterpret_cast<const std::uint8_t *>(sources);
             *dst = '\0';
 
             if( len > 0 ) {
@@ -105,9 +105,11 @@ namespace bchain {
             return 0;
         }
 
+        template <typename U>
         static
-        size_t encode( std::uint8_t *dst, const std::uint8_t *src, size_t len )
+        size_t encode( std::uint8_t *dst, const U *sources, size_t len )
         {
+            auto src = reinterpret_cast<const std::uint8_t *>(sources);
             *dst = '\0';
             if( len > 0 ) {
 
