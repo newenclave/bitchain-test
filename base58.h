@@ -5,6 +5,9 @@
 #include <cstdint>
 #include <memory.h>
 
+#include <vector>
+#include <array>
+
 #include "hash.h"
 
 namespace bchain {
@@ -34,11 +37,16 @@ namespace bchain {
         static std::string decode( const std::string &src )
         {
             std::string tmp(decoded_size( src.size( ) ), 0);
-            int len = decode( reinterpret_cast<std::uint8_t *>(&tmp[0]),
-                        reinterpret_cast<const std::uint8_t *>(src.c_str( )),
-                    src.size( ) );
+
+            using u8  = std::uint8_t;
+            using cu8 = const std::uint8_t;
+
+            int len = decode( reinterpret_cast<u8 *>(&tmp[0]),
+                              reinterpret_cast<cu8 *>(src.c_str( )),
+                              src.size( ) );
+
             if( len > 0 ) {
-                tmp.resize( len );
+                tmp.resize( static_cast<size_t>(len) );
             } else {
                 tmp.clear( );
             }
@@ -62,8 +70,8 @@ namespace bchain {
                 size_t start;
                 size_t mod;
 
-                std::uint8_t input58[len];
-                std::uint8_t tmp[len];
+                std::vector<std::uint8_t> input58(len);
+                std::vector<std::uint8_t> tmp(len);
 
                 for( size_t i=0; i < len; ++i ) {
 
@@ -90,12 +98,12 @@ namespace bchain {
 
                 while( start < len ) {
 
-                    mod = divmod256(input58, start, len);
+                    mod = divmod256(&input58[0], start, len);
 
-                    if(input58[start]==0) {
+                    if( input58[start] == 0 ) {
                         ++start;
                     }
-                    tmp[--j] = mod;
+                    tmp[--j] = static_cast<std::uint8_t>(mod);
                 }
 
                 while(j<len && tmp[j]==0) ++j;
@@ -103,7 +111,7 @@ namespace bchain {
                 memcpy( dst, &tmp[j-zc], len-(j-zc) );
 
                 dst[ len - (j-zc) ] = '\0';
-                return len-(j-zc);
+                return static_cast<int>(len - (j-zc));
             }
             return 0;
         }
@@ -124,18 +132,21 @@ namespace bchain {
                 size_t mod      = 0;
 
                 std::uint8_t *copy = copy_of_range( src, 0, len );
-                std::uint8_t tmp[tlen];
+                std::vector<std::uint8_t> tmp(tlen);
 
-                while((size_t)zc<len && copy[zc]=='\0') ++zc;
+                while( (static_cast<size_t>(zc) < len) && (copy[zc] == '\0')) {
+                    ++zc;
+                }
 
-                start = zc;
+                start = static_cast<size_t>(zc);
+
                 while( start < len ) {
 
                     mod = divmod58( copy, start, len );
                     if( copy[start] == 0 ) {
                         ++start;
                     }
-                    tmp[--j] = code(mod);
+                    tmp[--j] = static_cast<std::uint8_t>(code(mod));
                 }
 
                 while( (j < tlen) && (tmp[j] == code(0)) ) {
@@ -143,7 +154,7 @@ namespace bchain {
                 }
 
                 while( --zc >= 0 ) {
-                    tmp[--j] = code( 0 );
+                    tmp[--j] = static_cast<std::uint8_t>(code( 0 ));
                 }
 
                 free(copy);
@@ -183,10 +194,10 @@ namespace bchain {
             std::uint8_t digit[hash::sha256::digit_length];
             hash::sha256::get( digit, sources, len );
 
-            tmp[len + 0] = digit[0];
-            tmp[len + 1] = digit[1];
-            tmp[len + 2] = digit[2];
-            tmp[len + 3] = digit[3];
+            tmp[len + 0] = static_cast<char>(digit[0]);
+            tmp[len + 1] = static_cast<char>(digit[1]);
+            tmp[len + 2] = static_cast<char>(digit[2]);
+            tmp[len + 3] = static_cast<char>(digit[3]);
 
             size_t res_len = encode( dst, tmp.c_str( ), tmp.size( ) );
             return res_len;
@@ -236,7 +247,7 @@ namespace bchain {
             return table[id % 58];
         }
 
-        static std::uint8_t divmod58( std::uint8_t *number256,
+        static std::uint8_t divmod58( std::uint8_t *num256,
                                       size_t start, size_t len )
         {
             std::uint32_t dig256;
@@ -244,16 +255,16 @@ namespace bchain {
             std::uint32_t rem = 0;
 
             for( size_t i = start; i<len; i++ ) {
-                dig256       = static_cast<std::uint32_t>( number256[i] & 0xFF );
-                tmp          = rem * 256 + dig256;
-                number256[i] = static_cast<std::uint8_t>( tmp / 58 );
-                rem          = tmp % 58;
+                dig256    = static_cast<std::uint32_t>( num256[i] & 0xFF );
+                tmp       = rem * 256 + dig256;
+                num256[i] = static_cast<std::uint8_t>( tmp / 58 );
+                rem       = tmp % 58;
             }
 
             return static_cast<std::uint8_t>(rem & 0xFF);
         }
 
-        static std::uint8_t divmod256( std::uint8_t *number58,
+        static std::uint8_t divmod256( std::uint8_t *num58,
                                        size_t start, size_t len )
         {
             std::uint32_t dig58;
@@ -261,10 +272,10 @@ namespace bchain {
             std::uint32_t rem = 0;
 
             for(size_t i=start; i < len; i++) {
-                dig58       = static_cast<uint32_t>( number58[i] & 0xFF );
-                tmp         = rem * 58 + dig58;
-                number58[i] = static_cast<std::uint8_t>( tmp / 256 );
-                rem         = tmp % 256;
+                dig58    = static_cast<uint32_t>( num58[i] & 0xFF );
+                tmp      = rem * 58 + dig58;
+                num58[i] = static_cast<std::uint8_t>( tmp / 256 );
+                rem      = tmp % 256;
             }
             return static_cast<std::uint8_t>(rem);
         }
