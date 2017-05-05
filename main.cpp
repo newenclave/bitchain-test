@@ -47,24 +47,6 @@ int main( )
         0x19, 0xdf, 0xc2, 0xdb, 0x11, 0xdb, 0x1d, 0x28
     };
 
-    uint8_t digest[32];
-    const char message[] = "This is a very confidential message\n";
-
-    auto kpriv = crypto::key_pair::create_private( priv_bytes, sizeof(priv_bytes) );
-    auto kpub  = crypto::key_pair::create_public( pub_bytes, sizeof(pub_bytes) );
-
-    hash::sha256::get( digest, message, strlen(message) );
-
-    auto ss = crypto::signature::sign( digest, 32, kpriv.get( ) );
-
-    auto chk = ss.check( digest, 32, kpub.get( ) );
-
-    std::cout << chk << "\n";
-
-
-    std::cout << base58::encode_check( "Hello!", 6 ) << "\n";
-
-
     return 0;
 }
 

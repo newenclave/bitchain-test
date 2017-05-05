@@ -12,7 +12,8 @@ HEADERS += \
     varint.h \
     base58.h \
     hash.h \
-    crypto.h
+    crypto.h \
+    serializer.h
 
 INCLUDEPATH += etool/include
 
