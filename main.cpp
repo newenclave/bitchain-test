@@ -21,32 +21,17 @@
 
 #include "etool/details/byte_order.h"
 #include "etool/dumper/dump.h"
+#include "etool/sizepack/blockchain_varint.h"
 
 #include <memory.h>
 
 #include "catch/catch.hpp"
 
 using namespace bchain;
+using namespace bchain::hash;
 using namespace etool;
 
 namespace {
-
-}
-
-int main( )
-{
-
-    std::string out;
-
-    serializer::append_uint<std::uint32_t>(out, 0x68f7a38b  );
-    serializer::append_string(             out, "FooBar", 10);
-    serializer::append_uint<std::uint16_t>(out, 0xee12      );
-
-    dumper::make<>::all( out.c_str( ), 4, std::cout );
-    std::cout << "\n";
-    dumper::make<>::all( out.c_str( ) + 4, 10, std::cout );
-    std::cout << "\n";
-    dumper::make<>::all( out.c_str( ) + 14, 2, std::cout );
 
     uint8_t priv_bytes[32] = {
         0x16, 0x26, 0x07, 0x83, 0xe4, 0x0b, 0x16, 0x73,
@@ -62,6 +47,15 @@ int main( )
         0x8c, 0x39, 0x94, 0x75, 0xbf, 0x1e, 0x73, 0x8f,
         0x19, 0xdf, 0xc2, 0xdb, 0x11, 0xdb, 0x1d, 0x28
     };
+
+}
+
+int main( )
+{
+
+    std::string out;
+
+    dumper::make<>::all( out.c_str( ), out.size( ), std::cout ) << "\n";
 
     return 0;
 }

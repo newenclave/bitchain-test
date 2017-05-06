@@ -40,6 +40,15 @@ namespace bchain { namespace hash {
 
         template <typename U>
         static
+        void append( const U *dat, size_t len, std::string &out )
+        {
+            auto old = out.size( );
+            out.resize( old +  digit_length );
+            get( &out[old], dat, len );
+        }
+
+        template <typename U>
+        static
         bool check( const U *dat, size_t len, const digit_block dst )
         {
             const std::uint8_t * data =
@@ -48,6 +57,7 @@ namespace bchain { namespace hash {
             get( tmp, data, len );
             return (memcmp( dst, tmp, digit_length ) == 0);
         }
+
     };
 
     struct ripemd160 {
@@ -75,6 +85,15 @@ namespace bchain { namespace hash {
             RIPEMD160_Init(&ctx);
             RIPEMD160_Update( &ctx, data, len * sizeof(U) );
             RIPEMD160_Final( dst, &ctx );
+        }
+
+        template <typename U>
+        static
+        void append( const U *dat, size_t len, std::string &out )
+        {
+            auto old = out.size( );
+            out.resize( old +  digit_length );
+            get( &out[old], dat, len );
         }
 
         template <typename U>
@@ -112,6 +131,15 @@ namespace bchain { namespace hash {
             return std::string( &dst[0], &dst[digit_length] );
         }
 
+        template <typename U>
+        static
+        void append( const U *dat, size_t len, std::string &out )
+        {
+            auto old = out.size( );
+            out.resize( old +  digit_length );
+            get( &out[old], dat, len );
+        }
+
     };
 
     struct hash160 {
@@ -136,6 +164,15 @@ namespace bchain { namespace hash {
             digit_block second_dst;
             get(second_dst, dat, len);
             return std::string( &second_dst[0], &second_dst[digit_length] );
+        }
+
+        template <typename U>
+        static
+        void append( const U *dat, size_t len, std::string &out )
+        {
+            auto old = out.size( );
+            out.resize( old +  digit_length );
+            get( &out[old], dat, len );
         }
 
     };
