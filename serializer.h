@@ -7,6 +7,7 @@
 #include "base58.h"
 
 #include "etool/details/byte_order.h"
+#include "varint.h"
 
 namespace bchain {
 
@@ -15,15 +16,15 @@ namespace bchain {
         using endian = etool::details::endian;
 
         static
-        void append_string( std::string &out, const std::string &val )
+        void append_string( const std::string &val, std::string &out )
         {
             out.append( val );
         }
 
         static
-        void append_string( std::string &out,
-                            const std::string &val,
-                            size_t max_size )
+        void append_string( const std::string &val,
+                            size_t max_size,
+                            std::string &out )
         {
             if( val.size( ) < max_size ) {
                 std::string tmp(val);
@@ -36,13 +37,24 @@ namespace bchain {
 
         template <typename IntT>
         static
-        void append_uint( std::string &out, IntT data )
+        void append_uint( IntT data, std::string &out )
         {
             auto old = out.size( );
             out.resize( old + sizeof(data) );
             etool::details::byte_order<IntT, endian::LITTLE>
-                          ::write(data, &out[old]);
+                          ::write(data, &out[old] );
         }
+
+        template <typename IntT>
+        static
+        void append_varint( IntT data, std::string &out )
+        {
+            auto old = out.size( );
+            out.resize( old + varint::result_length(data) );
+            varint::write( data, &out[old] );
+        }
+
+
     };
 
 }
