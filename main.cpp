@@ -1,8 +1,6 @@
 #include <iostream>
 #include <string>
 #include <climits>
-#include <sys/types.h>
-#include <arpa/inet.h>
 
 #include <functional>
 #include <memory>
@@ -10,27 +8,45 @@
 #include "openssl/sha.h"
 #include "openssl/ripemd.h"
 
-#include "byte_order.h"
 #include "varint.h"
 #include "base58.h"
 #include "hash.h"
 #include "crypto.h"
+#include "serializer.h"
 
 #include <openssl/bn.h>
 #include <openssl/ec.h>
 #include <openssl/obj_mac.h>
 #include <openssl/ecdsa.h>
 
-#include <etool/details/byte_order.h>
+#include "etool/details/byte_order.h"
+#include "etool/dumper/dump.h"
 
 #include <memory.h>
 
 #include "catch/catch.hpp"
 
 using namespace bchain;
+using namespace etool;
+
+namespace {
+
+}
 
 int main( )
 {
+
+    std::string out;
+
+    serializer::append_uint<std::uint32_t>(out, 0x68f7a38b  );
+    serializer::append_string(             out, "FooBar", 10);
+    serializer::append_uint<std::uint16_t>(out, 0xee12      );
+
+    dumper::make<>::all( out.c_str( ), 4, std::cout );
+    std::cout << "\n";
+    dumper::make<>::all( out.c_str( ) + 4, 10, std::cout );
+    std::cout << "\n";
+    dumper::make<>::all( out.c_str( ) + 14, 2, std::cout );
 
     uint8_t priv_bytes[32] = {
         0x16, 0x26, 0x07, 0x83, 0xe4, 0x0b, 0x16, 0x73,

@@ -229,7 +229,8 @@ namespace bchain {
     template<>
     struct byte_order<std::uint64_t, true> {
         typedef std::uint64_t value_type;
-        static value_type value( value_type v )
+        static
+        value_type value( value_type v )
         {
             return ( ( v & 0xff00000000000000 ) >> 56) |
                    ( ( v & 0x00ff000000000000 ) >> 40) |
@@ -242,7 +243,8 @@ namespace bchain {
         }
 
         template <typename U>
-        static size_t write( value_type v, U *out )
+        static
+        size_t write( value_type v, U *out )
         {
             std::uint8_t *o = reinterpret_cast<std::uint8_t *>(out);
             o[7] =   v         & 0xFF;
@@ -257,7 +259,8 @@ namespace bchain {
         }
 
         template <typename U>
-        static value_type read( const U *in, size_t *len = nullptr )
+        static
+        value_type read( const U *in, size_t *len = nullptr )
         {
             const std::uint8_t *o = reinterpret_cast<const std::uint8_t *>(in);
             if( len ) {
