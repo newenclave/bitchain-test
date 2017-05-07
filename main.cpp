@@ -13,6 +13,7 @@
 #include "hash.h"
 #include "crypto.h"
 #include "serializer.h"
+#include "parser.h"
 #include "varint.h"
 
 #include <openssl/bn.h>
@@ -64,14 +65,13 @@ namespace {
 int main( )
 {
 
-    std::string data;
-    size_t res = 0;
-    auto len = varint::read(bytes, 13, &res);
+    size_t pos = 0;
 
-    data.assign( (char *)&bytes[res], len );
-
-    std::cout << res << " " << len << "\n";
-    std::cout << data << "\n";
+    auto len = parser::read_varint(bytes, sizeof(bytes), &pos);
+    if( len.second ) {
+        auto str = parser::read_string( bytes, sizeof(bytes), &pos, len.first );
+        std::cout << str.first << " " << len.first << "\n";
+    }
 
     return 0;
 }

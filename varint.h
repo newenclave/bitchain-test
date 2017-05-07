@@ -59,6 +59,18 @@ namespace bchain {
             }
         }
 
+        static
+        size_t packed_length( const void *data, size_t len )
+        {
+            if( len > 0 ) {
+                auto u8 = *static_cast<const std::uint8_t *>(data);
+                auto res = len_by_prefix(u8);
+                return (res >= len) ? res : 0;
+            }
+            return 0;
+        }
+
+
         template <typename U>
         static
         size_t write( size_type size, U *result )
