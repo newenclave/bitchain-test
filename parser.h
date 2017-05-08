@@ -24,29 +24,29 @@ namespace bchain {
         class state {
 
         public:
+
             state( const void *data, size_t len )
                 :slice_(static_cast<const std::uint8_t *>(data), len)
-                ,shift_(0)
             { }
 
-            void inc_shift( size_t val )
+            state &operator += ( size_t len ) noexcept
             {
-                shift_ += val;
+                slice_ += len;
+                return *this;
             }
 
             const std::uint8_t *get(  ) const
             {
-                return slice_.get( ) + shift_;
+                return slice_.get( );
             }
 
             size_t size( ) const
             {
-                return slice_.size( ) - shift_;
+                return slice_.size( );
             }
 
         private:
             data_slice slice_;
-            size_t     shift_;
         };
 
         static
@@ -56,7 +56,7 @@ namespace bchain {
             size_t shift = 0;
             auto res = varint::read( st.get( ), st.size( ), &shift );
             if( shift > 0 ) {
-                st.inc_shift( shift );
+                st += shift;
                 return res_type::ok(res);
             }
             return res_type::fail("Not enough data");
@@ -71,7 +71,7 @@ namespace bchain {
 
             if( st.size( ) >= sizeof(IntT) ) {
                 IntT res = ulittle::read( st.get( ) );
-                st.inc_shift(sizeof(IntT));
+                st += sizeof(IntT);
                 return res_type::ok(res);
             }
             return res_type::fail("Not enough data");
@@ -83,7 +83,7 @@ namespace bchain {
             using res_type = result_type<std::string>;
             if( st.size( ) >= string_len ) {
                 std::string res( st.get( ), st.get( ) + string_len );
-                st.inc_shift( string_len );
+                st += string_len;
                 return res_type::ok(res);
             }
             return res_type::fail("Not enough data");
