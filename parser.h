@@ -84,7 +84,7 @@ namespace bchain {
             if( st.size( ) >= string_len ) {
                 std::string res( st.get( ), st.get( ) + string_len );
                 st += string_len;
-                return res_type::ok(res);
+                return res_type::ok(std::move(res));
             }
             return res_type::fail("Not enough data");
         }

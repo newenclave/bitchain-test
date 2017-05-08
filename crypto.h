@@ -14,6 +14,7 @@
 namespace bchain { namespace crypto {
 
 #define BITCHAIN_CRYPTO_COMMON_IMPL( ThisType, ValueType  ) \
+                                                            \
     ThisType( ThisType &o ) = delete;                       \
     ThisType &operator = ( ThisType &o ) = delete;          \
                                                             \
@@ -183,7 +184,7 @@ namespace bchain { namespace crypto {
             const unsigned char *data =
                     reinterpret_cast<const unsigned char *>(mess);
 
-            signature s( ECDSA_do_sign(data, len, k) );
+            signature s( ECDSA_do_sign(data, len * sizeof(U), k) );
 
             return s;
         }
@@ -194,7 +195,7 @@ namespace bchain { namespace crypto {
             const unsigned char *data =
                     reinterpret_cast<const unsigned char *>(mess);
 
-            return ECDSA_do_verify( data, len, val_, k );
+            return ECDSA_do_verify( data, len * sizeof(U), val_, k );
         }
 
         template <typename U>
@@ -204,7 +205,7 @@ namespace bchain { namespace crypto {
             const unsigned char *data =
                     reinterpret_cast<const unsigned char *>(mess);
 
-            return ECDSA_do_verify( data, len, sig, k );
+            return ECDSA_do_verify( data, len * sizeof(U), sig, k );
         }
 
         BITCHAIN_CRYPTO_COMMON_IMPL(signature, ECDSA_SIG);
@@ -218,7 +219,8 @@ namespace bchain { namespace crypto {
         using private_bytes_block = std::uint8_t[private_bytes_length];
 
         template <typename U>
-        static key create_private( const U* priv_bytes, size_t len )
+        static
+        key create_private( const U* priv_bytes, size_t len )
         {
             key res;
             key k(EC_KEY_new_by_curve_name(NID_secp256k1));
@@ -260,7 +262,8 @@ namespace bchain { namespace crypto {
         }
 
         template <typename U>
-        static key create_public( const U* pub_bytes, size_t len )
+        static
+        key create_public( const U* pub_bytes, size_t len )
         {
             key res;
             key k(EC_KEY_new_by_curve_name(NID_secp256k1));
