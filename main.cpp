@@ -61,8 +61,8 @@ namespace {
 
 int main( )
 {
-    auto k = crypto::key_pair::generate( );
-    //auto k = crypto::key_pair::create_private( priv_bytes, 32 );
+    //auto k = crypto::key_pair::generate( );
+    auto k = crypto::key_pair::create_private( priv_bytes, 32 );
     uint8_t priv[32];
     uint8_t *pub;
 
@@ -73,6 +73,9 @@ int main( )
     }
 
     BN_bn2bin( priv_bn, priv );
+
+    dumper::make<>::all(priv, 32, std::cout )
+            << "\n========================\n";
 
 
     point_conversion_form_t conv_forms[] = {
