@@ -19,7 +19,29 @@ namespace bchain {
 
         template <typename T>
         using result_type = etool::detail::result<T, const char *>;
-        using data_slice  = etool::slices::memory<std::uint8_t>;
+        using data_slice  = etool::slices::memory<const std::uint8_t>;
+
+        class state {
+
+            state( const void *data, size_t len )
+                :slice_(static_cast<const std::uint8_t *>(data), len)
+                ,shift_(0)
+            { }
+
+            void inc_shift( size_t val )
+            {
+                shift_ += val;
+            }
+
+            const std::uint8_t *get(  ) const
+            {
+                return slice_.get( ) + shift_;
+            }
+
+        private:
+            data_slice slice_;
+            size_t     shift_;
+        };
 
         static
         result_type<std::uint64_t> read_varint( const void *data,
