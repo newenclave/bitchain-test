@@ -218,6 +218,42 @@ namespace bchain { namespace crypto {
         static const size_t private_bytes_length = 32;
         using private_bytes_block = std::uint8_t[private_bytes_length];
 
+        static
+        key generate( )
+        {
+            key res;
+            key k(EC_KEY_new_by_curve_name(NID_secp256k1));
+            if( k ) {
+
+                if( 1 != EC_KEY_generate_key(k.get( )) ) {
+                    return res;
+                }
+
+                const EC_GROUP *group = EC_KEY_get0_group(k.get( ));
+                const BIGNUM   *priv  = EC_KEY_get0_private_key(k.get( ));
+
+                ec_point pub(group);
+                bn_ctx   ctx;
+
+                if( !pub || !ctx || !group || !priv ) {
+                    return res;
+                }
+
+                if( 1 != EC_POINT_mul( group, pub.get( ), priv,
+                                       NULL, NULL, ctx.get( ) ) )
+                {
+                    return res;
+                }
+
+                if( 1 != EC_KEY_set_public_key(k.get( ), pub.get( ) ) ) {
+                    return res;
+                }
+
+                res.swap( k );
+            }
+            return res;
+        }
+
         template <typename U>
         static
         key create_private( const U* priv_bytes, size_t len )
@@ -273,10 +309,10 @@ namespace bchain { namespace crypto {
                         reinterpret_cast<const std::uint8_t *>(pub_bytes);
 
                 EC_KEY *kk = k.get( );
-                o2i_ECPublicKey( &kk, &pbc, len );
-                res.swap( k );
+                if( o2i_ECPublicKey( &kk, &pbc, len ) ) {
+                    res.swap( k );
+                }
             }
-
             return res;
         }
 
