@@ -38,6 +38,11 @@ namespace bchain {
                 return slice_.get( ) + shift_;
             }
 
+            size_t size( ) const
+            {
+                return slice_.size( ) - shift_;
+            }
+
         private:
             data_slice slice_;
             size_t     shift_;
