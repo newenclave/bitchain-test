@@ -38,8 +38,8 @@ namespace bchain {
 
         template <typename IntT>
         static
-        result_type<IntT> read_int( const void *data,
-                                    size_t len, size_t *pos )
+        result_type<IntT> read_uint( const void *data,
+                                     size_t len, size_t *pos )
         {
             using res_type = result_type<IntT>;
             using ulittle = etool::details::byte_order_little<IntT>;

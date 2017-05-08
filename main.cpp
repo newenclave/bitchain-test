@@ -60,13 +60,23 @@ namespace {
 
 int main( )
 {
+    std::string res;
 
-    size_t pos = 0;
+    serializer::append_varint(10, res);
+    serializer::append_string("Hello!", 10, res);
+    serializer::append_uint<std::uint16_t>( 666, res);
+    serializer::append_uint<std::uint32_t>( 0x66677700, res);
 
-    auto len = parser::read_varint( bytes, sizeof(bytes), &pos);
+    dumper::make<>::all(res.c_str( ), res.size( ), std::cout) << "\n";
+
+    size_t shift = 0;
+    auto len = parser::read_varint(res.c_str( ), res.size( ), &shift);
+
     if( len ) {
-        auto str = parser::read_string( bytes, sizeof(bytes), &pos, *len );
-        std::cout << *str << " " << *len << "\n";
+        auto str = parser::read_string(res.c_str( ), res.size( ), &shift, *len );
+        auto u16 = parser::read_uint<std::uint16_t>(res.c_str( ), res.size( ), &shift );
+        auto u32 = parser::read_uint<std::uint32_t>(res.c_str( ), res.size( ), &shift );
+        std::cout << *str << " " << *u16 << std::hex << " " << *u32 << "\n";
     }
 
     return 0;
