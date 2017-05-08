@@ -13,7 +13,8 @@ namespace bchain {
 
     struct serializer {
 
-        using endian = etool::details::endian;
+        template <typename IntT>
+        using little_endian = etool::details::byte_order_little<IntT>;
 
         static
         void append_string( const std::string &val, std::string &out )
@@ -22,8 +23,7 @@ namespace bchain {
         }
 
         static
-        void append_string( const std::string &val,
-                            size_t max_size,
+        void append_string( const std::string &val, size_t max_size,
                             std::string &out )
         {
             if( val.size( ) < max_size ) {
@@ -41,8 +41,7 @@ namespace bchain {
         {
             auto old = out.size( );
             out.resize( old + sizeof(data) );
-            etool::details::byte_order<IntT, endian::LITTLE>
-                          ::write(data, &out[old] );
+            little_endian<IntT>::write(data, &out[old] );
         }
 
         template <typename IntT>

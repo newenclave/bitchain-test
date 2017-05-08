@@ -8,6 +8,8 @@
 #include "base58.h"
 
 #include "etool/details/byte_order.h"
+#include "etool/slices/memory.h"
+
 #include "varint.h"
 
 namespace bchain {
