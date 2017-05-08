@@ -23,6 +23,7 @@ namespace bchain {
 
         class state {
 
+        public:
             state( const void *data, size_t len )
                 :slice_(static_cast<const std::uint8_t *>(data), len)
                 ,shift_(0)
@@ -49,15 +50,13 @@ namespace bchain {
         };
 
         static
-        result_type<std::uint64_t> read_varint( const void *data,
-                                                size_t len, size_t *pos )
+        result_type<std::uint64_t> read_varint( state &st )
         {
             using res_type = result_type<std::uint64_t>;
-            auto u8 = static_cast<const std::uint8_t *>(data);
             size_t shift = 0;
-            auto res = varint::read( &u8[*pos], len - *pos, &shift );
+            auto res = varint::read( st.get( ), st.size( ), &shift );
             if( shift > 0 ) {
-                *pos += shift;
+                st.inc_shift( shift );
                 return res_type::ok(res);
             }
             return res_type::fail("Not enough data");
@@ -65,31 +64,26 @@ namespace bchain {
 
         template <typename IntT>
         static
-        result_type<IntT> read_uint( const void *data,
-                                     size_t len, size_t *pos )
+        result_type<IntT> read_uint( state &st )
         {
             using res_type = result_type<IntT>;
             using ulittle = etool::details::byte_order_little<IntT>;
 
-            auto u8 = static_cast<const std::uint8_t *>(data);
-            if( (len - *pos) >= sizeof(IntT) ) {
-                IntT res = ulittle::read( &u8[*pos] );
-                *pos += sizeof(IntT);
+            if( st.size( ) >= sizeof(IntT) ) {
+                IntT res = ulittle::read( st.get( ) );
+                st.inc_shift(sizeof(IntT));
                 return res_type::ok(res);
             }
             return res_type::fail("Not enough data");
         }
 
         static
-        result_type<std::string> read_string( const void *data,
-                                              size_t len, size_t *pos,
-                                              size_t string_len )
+        result_type<std::string> read_string( state &st, size_t string_len )
         {
             using res_type = result_type<std::string>;
-            auto u8 = static_cast<const char *>(data);
-            if( len - *pos >= string_len ) {
-                std::string res( &u8[*pos], &u8[*pos + string_len] );
-                *pos += string_len;
+            if( st.size( ) >= string_len ) {
+                std::string res( st.get( ), st.get( ) + string_len );
+                st.inc_shift( string_len );
                 return res_type::ok(res);
             }
             return res_type::fail("Not enough data");

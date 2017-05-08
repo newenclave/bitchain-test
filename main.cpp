@@ -69,13 +69,14 @@ int main( )
 
     dumper::make<>::all(res.c_str( ), res.size( ), std::cout) << "\n";
 
-    size_t shift = 0;
-    auto len = parser::read_varint(res.c_str( ), res.size( ), &shift);
+    parser::state st(res.c_str( ), res.size( ));
+
+    auto len = parser::read_varint( st );
 
     if( len ) {
-        auto str = parser::read_string(res.c_str( ), res.size( ), &shift, *len );
-        auto u16 = parser::read_uint<std::uint16_t>(res.c_str( ), res.size( ), &shift );
-        auto u32 = parser::read_uint<std::uint32_t>(res.c_str( ), res.size( ), &shift );
+        auto str = parser::read_string( st, *len );
+        auto u16 = parser::read_uint<std::uint16_t>( st );
+        auto u32 = parser::read_uint<std::uint32_t>( st );
         std::cout << *str << " " << *u16 << std::hex << " " << *u32 << "\n";
     }
 
