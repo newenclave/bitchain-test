@@ -9,6 +9,7 @@
 
 #include "etool/details/byte_order.h"
 #include "etool/slices/memory.h"
+#include "etool/details/result.h"
 
 #include "varint.h"
 
