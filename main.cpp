@@ -67,10 +67,10 @@ int main( )
 
     size_t pos = 0;
 
-    auto len = parser::read_varint(bytes, sizeof(bytes), &pos);
-    if( len.second ) {
-        auto str = parser::read_string( bytes, sizeof(bytes), &pos, len.first );
-        std::cout << str.first << " " << len.first << "\n";
+    auto len = parser::read_varint( bytes, sizeof(bytes), &pos);
+    if( len ) {
+        auto str = parser::read_string( bytes, sizeof(bytes), &pos, *len );
+        std::cout << *str << " " << *len << "\n";
     }
 
     return 0;

@@ -18,51 +18,54 @@ namespace bchain {
     struct parser {
 
         template <typename T>
-        using res_pair = std::pair<T, bool>;
+        using result_type = etool::detail::result<T, const char *>;
+        using data_slice  = etool::slices::memory<std::uint8_t>;
 
         static
-        res_pair<std::uint64_t> read_varint( const void *data,
-                                   size_t len, size_t *pos )
+        result_type<std::uint64_t> read_varint( const void *data,
+                                                size_t len, size_t *pos )
         {
+            using res_type = result_type<std::uint64_t>;
             auto u8 = static_cast<const std::uint8_t *>(data);
             size_t shift = 0;
             auto res = varint::read( &u8[*pos], len - *pos, &shift );
-            bool read = false;
             if( shift > 0 ) {
                 *pos += shift;
-                read = true;
+                return res_type::ok(res);
             }
-            return std::make_pair(res, read);
+            return res_type::fail("Not enough data");
         }
 
         template <typename IntT>
         static
-        res_pair<IntT> read_int( const void *data,
-                                 size_t len, size_t *pos )
+        result_type<IntT> read_int( const void *data,
+                                    size_t len, size_t *pos )
         {
+            using res_type = result_type<IntT>;
             using ulittle = etool::details::byte_order_little<IntT>;
 
             auto u8 = static_cast<const std::uint8_t *>(data);
             if( (len - *pos) >= sizeof(IntT) ) {
                 IntT res = ulittle::read( &u8[*pos] );
                 *pos += sizeof(IntT);
-                return std::make_pair(res, true);
+                return res_type::ok(res);
             }
-            return std::make_pair(IntT( ), false);
+            return res_type::fail("Not enough data");
         }
 
         static
-        res_pair<std::string> read_string( const void *data,
-                                           size_t len, size_t *pos,
-                                           size_t string_len )
+        result_type<std::string> read_string( const void *data,
+                                              size_t len, size_t *pos,
+                                              size_t string_len )
         {
+            using res_type = result_type<std::string>;
             auto u8 = static_cast<const char *>(data);
             if( len - *pos >= string_len ) {
                 std::string res( &u8[*pos], &u8[*pos + string_len] );
                 *pos += string_len;
-                return std::make_pair(std::move(res), true);
+                return res_type::ok(res);
             }
-            return std::make_pair(std::string( ), false);
+            return res_type::fail("Not enough data");
         }
     };
 }
