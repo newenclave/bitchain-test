@@ -50,10 +50,6 @@ namespace {
         0x19, 0xdf, 0xc2, 0xdb, 0x11, 0xdb, 0x1d, 0x28
     };
 
-    using u16l   = details::byte_order<std::uint16_t, etool::details::endian::LITTLE>;
-    using u32l   = details::byte_order<std::uint32_t, etool::details::endian::LITTLE>;
-    using u64l   = details::byte_order<std::uint64_t, etool::details::endian::LITTLE>;
-
     uint8_t bytes[] = {
         0xfd, 0x0a, 0x00, 0xe3,
         0x03, 0x41, 0x8b, 0xa6,
