@@ -283,7 +283,7 @@ namespace bchain { namespace crypto {
         }
 
         template <typename U>
-        int check( const U  *mess, size_t len, EC_KEY *k )
+        int verify( const U  *mess, size_t len, EC_KEY *k )
         {
             auto data = reinterpret_cast<const unsigned char *>(mess);
             return ECDSA_do_verify( data, len * sizeof(U), val_, k );
@@ -291,7 +291,7 @@ namespace bchain { namespace crypto {
 
         template <typename U>
         static
-        int check( const U  *mess, size_t len, ECDSA_SIG *sig, EC_KEY *k )
+        int verify( const U  *mess, size_t len, ECDSA_SIG *sig, EC_KEY *k )
         {
             auto data = reinterpret_cast<const unsigned char *>(mess);
             return ECDSA_do_verify( data, len * sizeof(U), sig, k );
@@ -310,7 +310,7 @@ namespace bchain { namespace crypto {
         signature from_der( const std::string &der )
         {
             auto copy = reinterpret_cast<const std::uint8_t *>(&der[0]);
-            return signature( d2i_ECDSA_SIG(NULL, &copy, der.size( ) ) );
+            return signature( d2i_ECDSA_SIG( NULL, &copy, der.size( ) ) );
         }
 
         BITCHAIN_CRYPTO_COMMON_IMPL(signature, ECDSA_SIG);

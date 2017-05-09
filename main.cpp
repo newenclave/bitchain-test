@@ -73,19 +73,15 @@ int main( )
     auto pk = crypto::key_pair::create_public( pub_bytes, sizeof(pub_bytes) );
 
     auto digest = hash::sha256::get_string(message.c_str( ), message.size( ) );
-    crypto::signature signature(ECDSA_do_sign(reinterpret_cast<const std::uint8_t *>(digest.c_str( )),
-                                   digest.size( ), k.get( )) );
+    auto signature = crypto::signature::sign( digest.c_str( ), digest.size( ), k.get( ) );
 
-    auto t1 = ECDSA_size(k.get( ));
-    std::string der(t1, '\0');
-    auto der_copy = reinterpret_cast<std::uint8_t *>(&der[0]);
-    i2d_ECDSA_SIG( signature.get( ), &der_copy );
+    auto der = signature.to_der( k.get( ) );
+    auto sig = crypto::signature::from_der( der );
 
     dumper::make<>::all(der.c_str( ), der.size( ),
                         std::cout << "DER: \n") << "\n";
 
-    auto verified = ECDSA_do_verify(reinterpret_cast<const std::uint8_t *>(digest.c_str( )),
-                                    digest.size( ), signature.get( ), pk.get( ));
+    auto verified = sig.verify( digest.c_str( ), digest.size( ), pk.get( ) );
 
     std::cout << verified << "\n";
 
