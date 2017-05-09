@@ -276,9 +276,7 @@ namespace bchain { namespace crypto {
         static
         signature sign( const U  *mess, size_t len, EC_KEY *k )
         {
-            const unsigned char *data =
-                    reinterpret_cast<const unsigned char *>(mess);
-
+            auto data = reinterpret_cast<const unsigned char *>(mess);
             signature s( ECDSA_do_sign(data, len * sizeof(U), k) );
 
             return s;
@@ -287,9 +285,7 @@ namespace bchain { namespace crypto {
         template <typename U>
         int check( const U  *mess, size_t len, EC_KEY *k )
         {
-            const unsigned char *data =
-                    reinterpret_cast<const unsigned char *>(mess);
-
+            auto data = reinterpret_cast<const unsigned char *>(mess);
             return ECDSA_do_verify( data, len * sizeof(U), val_, k );
         }
 
@@ -297,9 +293,7 @@ namespace bchain { namespace crypto {
         static
         int check( const U  *mess, size_t len, ECDSA_SIG *sig, EC_KEY *k )
         {
-            const unsigned char *data =
-                    reinterpret_cast<const unsigned char *>(mess);
-
+            auto data = reinterpret_cast<const unsigned char *>(mess);
             return ECDSA_do_verify( data, len * sizeof(U), sig, k );
         }
 
@@ -341,8 +335,7 @@ namespace bchain { namespace crypto {
                     return res;
                 }
 
-                const std::uint8_t *pb =
-                        reinterpret_cast<const std::uint8_t *>(priv_bytes);
+                auto pb = reinterpret_cast<const std::uint8_t *>(priv_bytes);
 
                 BN_bin2bn( pb, len, priv.get( ) );
                 if(1 != EC_KEY_set_private_key( k.get( ), priv.get( ) ) ) {
@@ -380,9 +373,7 @@ namespace bchain { namespace crypto {
             ec_key k(EC_KEY_new_by_curve_name(NID_secp256k1));
 
             if( k ) {
-                const std::uint8_t *pbc =
-                        reinterpret_cast<const std::uint8_t *>(pub_bytes);
-
+                auto pbc = reinterpret_cast<const std::uint8_t *>(pub_bytes);
                 EC_KEY *kk = k.get( );
                 if( o2i_ECPublicKey( &kk, &pbc, len ) ) {
                     res.swap( k );
