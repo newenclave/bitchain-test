@@ -11,6 +11,8 @@
 #include <memory>
 #include <random>
 
+#include "etool/details/result.h"
+
 namespace bchain { namespace crypto {
 
 #define BITCHAIN_CRYPTO_COMMON_IMPL( ThisType, ValueType  ) \
@@ -128,26 +130,60 @@ namespace bchain { namespace crypto {
         BITCHAIN_CRYPTO_COMMON_IMPL(ec_point, EC_POINT);
     };
 
-    class key {
+    class ec_key {
 
     public:
         using value_type = EC_KEY;
-        using this_type  = key;
+        using this_type  = ec_key;
 
-        key( EC_KEY *k )
+        ec_key( EC_KEY *k )
             :val_(k)
         { }
 
-        key( )
+        ec_key( )
         { }
 
-        ~key( )
+        ~ec_key( )
         {
             if( val_ ) {
                 EC_KEY_free( val_ );
             }
         }
-        BITCHAIN_CRYPTO_COMMON_IMPL(key, EC_KEY);
+
+        std::string get_public_bytes( point_conversion_form_t conversion )
+        {
+            EC_KEY_set_conv_form( get( ), conversion );
+
+            auto pub_len = i2o_ECPublicKey( get( ), NULL );
+
+            if( pub_len == 0 ) {
+                return std::string( );
+            }
+
+            std::string pub(pub_len, '\0');
+
+            auto pub_copy = reinterpret_cast<std::uint8_t *>(&pub[0]);
+            if( i2o_ECPublicKey( get( ), &pub_copy ) != pub_len ) {
+                return std::string( );
+            }
+            return pub;
+        }
+
+        std::string get_private_bytes( ) const
+        {
+            auto bn = EC_KEY_get0_private_key(get( ));
+            if( bn ) {
+                auto len = BN_num_bytes( bn );
+                if( len > 0 ) {
+                    std::string priv(len, '\0');
+                    BN_bn2bin( bn, reinterpret_cast<std::uint8_t *>(&priv[0]) );
+                    return priv;
+                }
+            }
+            return std::string( );
+        }
+
+        BITCHAIN_CRYPTO_COMMON_IMPL(ec_key, EC_KEY);
     };
 
     class signature {
@@ -219,10 +255,11 @@ namespace bchain { namespace crypto {
         using private_bytes_block = std::uint8_t[private_bytes_length];
 
         static
-        key generate( )
+        ec_key generate( int curve_name = NID_secp256k1 )
         {
-            key res;
-            key k(EC_KEY_new_by_curve_name(NID_secp256k1));
+            ec_key res;
+            ec_key k(EC_KEY_new_by_curve_name(curve_name));
+
             if( k ) {
 
                 if( 1 != EC_KEY_generate_key(k.get( )) ) {
@@ -256,10 +293,10 @@ namespace bchain { namespace crypto {
 
         template <typename U>
         static
-        key create_private( const U* priv_bytes, size_t len )
+        ec_key create_private( const U* priv_bytes, size_t len )
         {
-            key res;
-            key k(EC_KEY_new_by_curve_name(NID_secp256k1));
+            ec_key res;
+            ec_key k(EC_KEY_new_by_curve_name(NID_secp256k1));
             if( k ) {
                 bignum  priv;
                 if( !priv ) {
@@ -299,10 +336,10 @@ namespace bchain { namespace crypto {
 
         template <typename U>
         static
-        key create_public( const U* pub_bytes, size_t len )
+        ec_key create_public( const U* pub_bytes, size_t len )
         {
-            key res;
-            key k(EC_KEY_new_by_curve_name(NID_secp256k1));
+            ec_key res;
+            ec_key k(EC_KEY_new_by_curve_name(NID_secp256k1));
 
             if( k ) {
                 const std::uint8_t *pbc =

@@ -61,45 +61,25 @@ namespace {
 
 int main( )
 {
-    //auto k = crypto::key_pair::generate( );
-    auto k = crypto::key_pair::create_private( priv_bytes, 32 );
-    uint8_t priv[32];
-    uint8_t *pub;
+    auto k = crypto::key_pair::generate( );
+    //auto k = crypto::key_pair::create_private( priv_bytes, 32 );
+    auto priv = k.get_private_bytes( );
 
-    const BIGNUM *priv_bn = EC_KEY_get0_private_key(k.get( ));
 
-    if(!priv_bn) {
-        std::cout << "Error!\n";
-    }
-
-    BN_bn2bin( priv_bn, priv );
-
-    dumper::make<>::all(priv, 32, std::cout )
+    dumper::make<>::all(priv.c_str( ), priv.size( ), std::cout )
             << "\n========================\n";
 
 
     point_conversion_form_t conv_forms[] = {
-       POINT_CONVERSION_UNCOMPRESSED,
-       POINT_CONVERSION_COMPRESSED
+        POINT_CONVERSION_UNCOMPRESSED,
+        POINT_CONVERSION_COMPRESSED,
     };
 
     for(int i = 0; i < sizeof(conv_forms) / sizeof(point_conversion_form_t); ++i) {
-        size_t pub_len;
-        uint8_t *pub_copy;
-
-        EC_KEY_set_conv_form( k.get( ), conv_forms[i]);
-
-        pub_len = i2o_ECPublicKey(k.get( ), NULL);
-        pub = (uint8_t *)malloc(pub_len);
-
-        /* pub_copy is needed because i2o_ECPublicKey alters the input pointer */
-        pub_copy = pub;
-        if( i2o_ECPublicKey(k.get( ), &pub_copy) != pub_len ) {
-             continue;
-        }
-        dumper::make<>::all(pub, pub_len, std::cout )
-                << "\n========================\n";
-        free(pub);
+        auto pub = k.get_public_bytes(conv_forms[i]);
+        dumper::make<>::all( pub.c_str( ), 1, std::cout ) << "\n";
+        dumper::make<>::all( pub.c_str( ) + 1, pub.size( ) - 1, std::cout )
+                << "\n============================\n";
     }
 
     return 0;
