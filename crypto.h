@@ -313,6 +313,8 @@ namespace bchain { namespace crypto {
             return signature( d2i_ECDSA_SIG( NULL, &copy, der.size( ) ) );
         }
 
+    public:
+
         BITCHAIN_CRYPTO_COMMON_IMPL(signature, ECDSA_SIG);
     };
 
