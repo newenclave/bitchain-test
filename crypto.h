@@ -104,6 +104,27 @@ namespace bchain { namespace crypto {
             }
         }
 
+        static
+        std::string to_bytes( const BIGNUM *bn )
+        {
+            auto len = BN_num_bytes( bn );
+            if( len > 0 ) {
+                std::string bytes(len, '\0');
+                BN_bn2bin( bn, reinterpret_cast<std::uint8_t *>(&bytes[0]) );
+                return bytes;
+            }
+            return std::string( );
+        }
+
+        static
+        bignum from_bytes( std::string bytes )
+        {
+            bignum bn;
+            BN_bin2bn( reinterpret_cast<const std::uint8_t *>(&bytes[0]),
+                       bytes.size( ), bn.get( ) );
+            return std::move(bn);
+        }
+
         BITCHAIN_CRYPTO_COMMON_IMPL(bignum, BIGNUM);
     };
 
@@ -216,12 +237,7 @@ namespace bchain { namespace crypto {
         {
             auto bn = EC_KEY_get0_private_key(get( ));
             if( bn ) {
-                auto len = BN_num_bytes( bn );
-                if( len > 0 ) {
-                    std::string priv(len, '\0');
-                    BN_bn2bin( bn, reinterpret_cast<std::uint8_t *>(&priv[0]) );
-                    return priv;
-                }
+                return bignum::to_bytes( bn );
             }
             return std::string( );
         }
@@ -285,6 +301,22 @@ namespace bchain { namespace crypto {
                     reinterpret_cast<const unsigned char *>(mess);
 
             return ECDSA_do_verify( data, len * sizeof(U), sig, k );
+        }
+
+        std::string to_der( const EC_KEY *k ) const
+        {
+            auto t1 = ECDSA_size( k );
+            std::string der(t1, '\0');
+            auto der_copy = reinterpret_cast<std::uint8_t *>(&der[0]);
+            i2d_ECDSA_SIG( get( ), &der_copy );
+            return der;
+        }
+
+        static
+        signature from_der( const std::string &der )
+        {
+            auto copy = reinterpret_cast<const std::uint8_t *>(&der[0]);
+            return signature( d2i_ECDSA_SIG(NULL, &copy, der.size( ) ) );
         }
 
         BITCHAIN_CRYPTO_COMMON_IMPL(signature, ECDSA_SIG);

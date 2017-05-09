@@ -50,36 +50,47 @@ namespace {
         0x19, 0xdf, 0xc2, 0xdb, 0x11, 0xdb, 0x1d, 0x28
     };
 
+    uint8_t pub_bytes_[33] = {
+        0x02,
+        0x82, 0x00, 0x6e, 0x93, 0x98, 0xa6, 0x98, 0x6e,
+        0xda, 0x61, 0xfe, 0x91, 0x67, 0x4c, 0x3a, 0x10,
+        0x8c, 0x39, 0x94, 0x75, 0xbf, 0x1e, 0x73, 0x8f,
+        0x19, 0xdf, 0xc2, 0xdb, 0x11, 0xdb, 0x1d, 0x28
+    };
+
     uint8_t bytes[] = {
         0xfd, 0x0a, 0x00, 0xe3,
         0x03, 0x41, 0x8b, 0xa6,
         0x20, 0xe1, 0xb7, 0x83,
         0x60
     };
-
+    const std::string message = "This is a very confidential message\n";
 }
 
 int main( )
 {
-    auto k = crypto::ec_key::generate( );
-    //auto k = crypto::key_pair::create_private( priv_bytes, 32 );
-    auto priv = k.get_private_bytes( );
+    auto k = crypto::key_pair::create_private( priv_bytes, sizeof(priv_bytes) );
+    auto pk = crypto::key_pair::create_public( pub_bytes, sizeof(pub_bytes) );
 
+    auto digest = hash::sha256::get_string(message.c_str( ), message.size( ) );
+    crypto::signature signature(ECDSA_do_sign(reinterpret_cast<const std::uint8_t *>(digest.c_str( )),
+                                   digest.size( ), k.get( )) );
 
-    dumper::make<>::all(priv.c_str( ), priv.size( ), std::cout )
-            << "\n========================\n";
+    auto t1 = ECDSA_size(k.get( ));
+    std::string der(t1, '\0');
+    auto der_copy = reinterpret_cast<std::uint8_t *>(&der[0]);
+    i2d_ECDSA_SIG( signature.get( ), &der_copy );
 
-    point_conversion_form_t conv_forms[] = {
-        POINT_CONVERSION_UNCOMPRESSED,
-        POINT_CONVERSION_COMPRESSED,
-    };
+    dumper::make<>::all(der.c_str( ), der.size( ),
+                        std::cout << "DER: \n") << "\n";
 
-    for(int i = 0; i < sizeof(conv_forms) / sizeof(point_conversion_form_t); ++i) {
-        auto pub = k.get_public_bytes(conv_forms[i]);
-        dumper::make<>::all( pub.c_str( ), 1, std::cout ) << "\n";
-        dumper::make<>::all( pub.c_str( ) + 1, pub.size( ) - 1, std::cout )
-                << "\n============================\n";
-    }
+    auto verified = ECDSA_do_verify(reinterpret_cast<const std::uint8_t *>(digest.c_str( )),
+                                    digest.size( ), signature.get( ), pk.get( ));
+
+    std::cout << verified << "\n";
+
+    dumper::make<>::all(digest.c_str( ), digest.size( ),
+                        std::cout << "SHA256: \n") << "\n";
 
     return 0;
 }
