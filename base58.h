@@ -14,17 +14,20 @@ namespace bchain {
 
     struct base58 {
 
-        static size_t encoded_size( size_t len )
+        static
+        size_t encoded_size( size_t len )
         {
             return ( (len + 4) / 5 ) * 7;
         }
 
-        static size_t decoded_size( size_t len )
+        static
+        size_t decoded_size( size_t len )
         {
             return ( len / 4 ) * 3;
         }
 
-        static std::string encode( const std::string &src )
+        static
+        std::string encode( const std::string &src )
         {
             std::string tmp(encoded_size( src.size( ) ), 0);
             size_t len = encode( reinterpret_cast<std::uint8_t *>(&tmp[0]),
@@ -34,7 +37,8 @@ namespace bchain {
             return tmp;
         }
 
-        static std::string decode( const std::string &src )
+        static
+        std::string decode( const std::string &src )
         {
             std::string tmp(decoded_size( src.size( ) ), 0);
 
@@ -208,7 +212,8 @@ namespace bchain {
 
     private:
 
-        static std::uint8_t *copy_of_range( const std::uint8_t *src,
+        static
+        std::uint8_t *copy_of_range( const std::uint8_t *src,
                                             size_t from, size_t to )
         {
             std::uint8_t *dst =
@@ -218,7 +223,8 @@ namespace bchain {
             return dst;
         }
 
-        static char index( size_t id )
+        static
+        char index( size_t id )
         {
             static const char XX = -1;
             static const char table[0x100] = {
@@ -242,7 +248,8 @@ namespace bchain {
             return table[id % 0x100];
         }
 
-        static char code( size_t id )
+        static
+        char code( size_t id )
         {
             static const char table[ ]= "123456789"
                                         "ABCDEFGHJKLMNPQRSTUVWXYZ"
@@ -250,8 +257,8 @@ namespace bchain {
             return table[id % 58];
         }
 
-        static std::uint8_t divmod58( std::uint8_t *num256,
-                                      size_t start, size_t len )
+        static
+        std::uint8_t divmod58( std::uint8_t *num256, size_t start, size_t len )
         {
             std::uint32_t dig256;
             std::uint32_t tmp;
@@ -267,8 +274,8 @@ namespace bchain {
             return static_cast<std::uint8_t>(rem & 0xFF);
         }
 
-        static std::uint8_t divmod256( std::uint8_t *num58,
-                                       size_t start, size_t len )
+        static
+        std::uint8_t divmod256( std::uint8_t *num58, size_t start, size_t len )
         {
             std::uint32_t dig58;
             std::uint32_t tmp;
