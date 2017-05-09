@@ -150,6 +150,49 @@ namespace bchain { namespace crypto {
             }
         }
 
+        static
+        ec_key generate( )
+        {
+            return generate( NID_secp256k1 );
+        }
+
+        static
+        ec_key generate( int curve_name )
+        {
+            ec_key res;
+            ec_key k(EC_KEY_new_by_curve_name(curve_name));
+
+            if( k ) {
+
+                if( 1 != EC_KEY_generate_key(k.get( )) ) {
+                    return res;
+                }
+
+                const EC_GROUP *group = EC_KEY_get0_group(k.get( ));
+                const BIGNUM   *priv  = EC_KEY_get0_private_key(k.get( ));
+
+                ec_point pub(group);
+                bn_ctx   ctx;
+
+                if( !pub || !ctx || !group || !priv ) {
+                    return res;
+                }
+
+                if( 1 != EC_POINT_mul( group, pub.get( ), priv,
+                                       NULL, NULL, ctx.get( ) ) )
+                {
+                    return res;
+                }
+
+                if( 1 != EC_KEY_set_public_key(k.get( ), pub.get( ) ) ) {
+                    return res;
+                }
+
+                res.swap( k );
+            }
+            return res;
+        }
+
         std::string get_public_bytes( point_conversion_form_t conversion )
         {
             EC_KEY_set_conv_form( get( ), conversion );
@@ -253,43 +296,6 @@ namespace bchain { namespace crypto {
 
         static const size_t private_bytes_length = 32;
         using private_bytes_block = std::uint8_t[private_bytes_length];
-
-        static
-        ec_key generate( int curve_name = NID_secp256k1 )
-        {
-            ec_key res;
-            ec_key k(EC_KEY_new_by_curve_name(curve_name));
-
-            if( k ) {
-
-                if( 1 != EC_KEY_generate_key(k.get( )) ) {
-                    return res;
-                }
-
-                const EC_GROUP *group = EC_KEY_get0_group(k.get( ));
-                const BIGNUM   *priv  = EC_KEY_get0_private_key(k.get( ));
-
-                ec_point pub(group);
-                bn_ctx   ctx;
-
-                if( !pub || !ctx || !group || !priv ) {
-                    return res;
-                }
-
-                if( 1 != EC_POINT_mul( group, pub.get( ), priv,
-                                       NULL, NULL, ctx.get( ) ) )
-                {
-                    return res;
-                }
-
-                if( 1 != EC_KEY_set_public_key(k.get( ), pub.get( ) ) ) {
-                    return res;
-                }
-
-                res.swap( k );
-            }
-            return res;
-        }
 
         template <typename U>
         static

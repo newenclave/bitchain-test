@@ -61,14 +61,13 @@ namespace {
 
 int main( )
 {
-    auto k = crypto::key_pair::generate( );
+    auto k = crypto::ec_key::generate( );
     //auto k = crypto::key_pair::create_private( priv_bytes, 32 );
     auto priv = k.get_private_bytes( );
 
 
     dumper::make<>::all(priv.c_str( ), priv.size( ), std::cout )
             << "\n========================\n";
-
 
     point_conversion_form_t conv_forms[] = {
         POINT_CONVERSION_UNCOMPRESSED,
