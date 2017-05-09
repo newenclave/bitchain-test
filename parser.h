@@ -49,6 +49,10 @@ namespace bchain {
             data_slice slice_;
         };
 
+        parser( state st )
+            :st_(std::move(st))
+        { }
+
         static
         result_type<std::uint64_t> read_varint( state &st )
         {
@@ -60,6 +64,11 @@ namespace bchain {
                 return res_type::ok(res);
             }
             return res_type::fail("Not enough data");
+        }
+
+        result_type<std::uint64_t> read_varint( )
+        {
+            return read_varint( st_ );
         }
 
         template <typename IntT>
@@ -77,6 +86,12 @@ namespace bchain {
             return res_type::fail("Not enough data");
         }
 
+        template <typename IntT>
+        result_type<IntT> read_uint( )
+        {
+            return read_uint<IntT>( st_ );
+        }
+
         static
         result_type<std::string> read_string( state &st, size_t string_len )
         {
@@ -88,6 +103,14 @@ namespace bchain {
             }
             return res_type::fail("Not enough data");
         }
+
+        result_type<std::string> read_string( size_t string_len )
+        {
+            return read_string( st_, string_len );
+        }
+
+    private:
+        state st_;
     };
 }
 
