@@ -16,6 +16,10 @@ namespace bchain {
         template <typename IntT>
         using little_endian = etool::details::byte_order_little<IntT>;
 
+        struct state {
+
+        };
+
         static
         void append_string( const std::string &val, std::string &out )
         {
@@ -53,7 +57,8 @@ namespace bchain {
             varint::write( data, &out[old] );
         }
 
-
+    private:
+        state st_;
     };
 
 }
