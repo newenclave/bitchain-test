@@ -118,10 +118,13 @@ namespace bchain {
 
         template <typename U>
         static
-        size_t encode( std::uint8_t *dst, const U *sources, size_t len )
+        size_t encode( std::uint8_t *dst, const U *sources, size_t lens )
         {
             const std::uint8_t * src =
                     reinterpret_cast<const std::uint8_t *>(sources);
+
+            size_t len = lens * sizeof(U);
+
             *dst = '\0';
             if( len > 0 ) {
 
