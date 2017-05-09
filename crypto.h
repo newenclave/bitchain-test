@@ -200,7 +200,7 @@ namespace bchain { namespace crypto {
                 }
 
                 if( 1 != EC_POINT_mul( group, pub.get( ), priv,
-                                       NULL, NULL, ctx.get( ) ) )
+                                       nullptr, nullptr,  ctx.get( ) ) )
                 {
                     return res;
                 }
@@ -218,7 +218,7 @@ namespace bchain { namespace crypto {
         {
             EC_KEY_set_conv_form( get( ), conversion );
 
-            auto pub_len = i2o_ECPublicKey( get( ), NULL );
+            auto pub_len = i2o_ECPublicKey( get( ), nullptr );
 
             if( pub_len == 0 ) {
                 return std::string( );
@@ -310,7 +310,7 @@ namespace bchain { namespace crypto {
         signature from_der( const std::string &der )
         {
             auto copy = reinterpret_cast<const std::uint8_t *>(&der[0]);
-            return signature( d2i_ECDSA_SIG( NULL, &copy, der.size( ) ) );
+            return signature( d2i_ECDSA_SIG( nullptr, &copy, der.size( ) ) );
         }
 
     public:
@@ -353,7 +353,7 @@ namespace bchain { namespace crypto {
                 }
 
                 if( 1 != EC_POINT_mul( group, pub.get( ), priv.get( ),
-                                       NULL, NULL, ctx.get( ) ) )
+                                       nullptr, nullptr,  ctx.get( ) ) )
                 {
                     return res;
                 }
