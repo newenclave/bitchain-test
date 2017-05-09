@@ -340,7 +340,7 @@ namespace bchain { namespace crypto {
                 auto pb = reinterpret_cast<const std::uint8_t *>(priv_bytes);
 
                 BN_bin2bn( pb, len, priv.get( ) );
-                if(1 != EC_KEY_set_private_key( k.get( ), priv.get( ) ) ) {
+                if( 1 != EC_KEY_set_private_key( k.get( ), priv.get( ) ) ) {
                     return res;
                 }
 
