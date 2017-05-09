@@ -60,10 +60,13 @@ namespace bchain {
 
         template <typename U>
         static
-        int decode( std::uint8_t *dst, const U *sources, size_t len )
+        int decode( std::uint8_t *dst, const U *sources, size_t lens )
         {
-            const std::uint8_t * src =
-                    reinterpret_cast<const std::uint8_t *>(sources);
+            using u8  = std::uint8_t;
+            using cu8 = const std::uint8_t;
+
+            size_t len = lens * sizeof(U);
+            const std::uint8_t * src = reinterpret_cast<cu8 *>(sources);
             *dst = '\0';
 
             if( len > 0 ) {
@@ -125,10 +128,11 @@ namespace bchain {
         static
         size_t encode( std::uint8_t *dst, const U *sources, size_t lens )
         {
-            const std::uint8_t * src =
-                    reinterpret_cast<const std::uint8_t *>(sources);
+            using u8  = std::uint8_t;
+            using cu8 = const std::uint8_t;
 
             size_t len = lens * sizeof(U);
+            const std::uint8_t * src = reinterpret_cast<cu8 *>(sources);
 
             *dst = '\0';
             if( len > 0 ) {
@@ -177,10 +181,12 @@ namespace bchain {
         static
         std::string encode_check( const U *sources, size_t len )
         {
+            using u8  = std::uint8_t;
+            using cu8 = const std::uint8_t;
+
             std::string res(encoded_size( len ) + 4, 0);
-            size_t res_len =
-                    encode_check( reinterpret_cast<std::uint8_t *>(&res[0]),
-                                  sources, len );
+            size_t res_len = encode_check( reinterpret_cast<u8 *>(&res[0]),
+                                           sources, len );
             res.resize( res_len );
             return res;
         }
@@ -188,10 +194,13 @@ namespace bchain {
 
         template <typename U>
         static
-        size_t encode_check( std::uint8_t *dst, const U *sources, size_t len )
+        size_t encode_check( std::uint8_t *dst, const U *sources, size_t lens )
         {
-            const std::uint8_t * src =
-                    reinterpret_cast<const std::uint8_t *>(sources);
+            using u8  = std::uint8_t;
+            using cu8 = const std::uint8_t;
+
+            size_t len = lens * sizeof(U);
+            const std::uint8_t * src = reinterpret_cast<cu8 *>(sources);
 
             std::string tmp;
             tmp.reserve( len + 4 );
@@ -200,7 +209,7 @@ namespace bchain {
             tmp.resize( tmp.size( ) + 4 );
 
             std::uint8_t digit[hash::sha256::digit_length];
-            hash::sha256::get( digit, sources, len );
+            hash::sha256::get( digit, sources, lens );
 
             tmp[len + 0] = static_cast<char>(digit[0]);
             tmp[len + 1] = static_cast<char>(digit[1]);
