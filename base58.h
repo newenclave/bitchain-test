@@ -29,10 +29,11 @@ namespace bchain {
         static
         std::string encode( const std::string &src )
         {
+            using u8  = std::uint8_t;
+            using cu8 = const std::uint8_t;
             std::string tmp(encoded_size( src.size( ) ), 0);
-            size_t len = encode( reinterpret_cast<std::uint8_t *>(&tmp[0]),
-                           reinterpret_cast<const std::uint8_t *>(src.c_str( )),
-                    src.size( ) );
+            size_t len = encode( reinterpret_cast<u8 *>(&tmp[0]),
+                         reinterpret_cast<cu8 *>(src.c_str( )), src.size( ) );
             tmp.resize( len );
             return tmp;
         }
