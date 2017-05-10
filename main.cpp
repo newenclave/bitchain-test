@@ -116,7 +116,7 @@ struct wif {
 };
 
 // pay-to-public-key-hash
-struct p2pkn {
+struct p2pkh {
 
     static
     std::string create( crypto::ec_key &k, std::uint8_t prefix )
@@ -180,7 +180,7 @@ int wif_p2p( )
 
     auto chcked = base58::encode_check( addr.c_str( ), addr.size( ) );
     auto wif    = wif::create( priv_bytes, sizeof(priv_bytes), 0xef, true );
-    auto p2pkn  = p2pkn::create( pub_bytes, sizeof(pub_bytes), 0x6f );
+    auto p2pkn  = p2pkh::create( pub_bytes, sizeof(pub_bytes), 0x6f );
 
     dumper::make<>::all(chcked.c_str( ), chcked.size( ),
                         std::cout << "Checked: \n") << "\n";
