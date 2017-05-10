@@ -224,9 +224,15 @@ namespace bchain { namespace crypto {
             EC_KEY_set_conv_form( get( ), conversion );
         }
 
-        bool conv_compressed( ) const
+        bool get_conv_compressed( ) const
         {
             return get_conv_form( ) == POINT_CONVERSION_COMPRESSED;
+        }
+
+        void set_conv_compressed( bool val )
+        {
+            set_conv_form( val ? POINT_CONVERSION_COMPRESSED :
+                                 POINT_CONVERSION_UNCOMPRESSED );
         }
 
         std::string get_public_bytes( point_conversion_form_t conversion )
