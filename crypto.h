@@ -214,10 +214,32 @@ namespace bchain { namespace crypto {
             return res;
         }
 
-        std::string get_public_bytes( point_conversion_form_t conversion )
+        point_conversion_form_t get_conv_form( ) const
+        {
+            return EC_KEY_get_conv_form( get( ) );
+        }
+
+        void set_conv_form( point_conversion_form_t conversion )
         {
             EC_KEY_set_conv_form( get( ), conversion );
+        }
 
+        bool conv_compressed( ) const
+        {
+            return get_conv_form( ) == POINT_CONVERSION_COMPRESSED;
+        }
+
+        std::string get_public_bytes( point_conversion_form_t conversion )
+        {
+            auto conv = get_conv_form( );
+            set_conv_form( conversion );
+            auto res = get_public_bytes( );
+            set_conv_form( conv );
+            return std::move(res);
+        }
+
+        std::string get_public_bytes(  )
+        {
             auto pub_len = i2o_ECPublicKey( get( ), nullptr );
 
             if( pub_len == 0 ) {
