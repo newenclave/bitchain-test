@@ -62,7 +62,7 @@ namespace bchain {
         static
         int decode( std::uint8_t *dst, const U *sources, size_t lens )
         {
-            using u8  = std::uint8_t;
+            //using u8  = std::uint8_t;
             using cu8 = const std::uint8_t;
 
             size_t len = lens * sizeof(U);
@@ -128,7 +128,8 @@ namespace bchain {
         static
         size_t encode( std::uint8_t *dst, const U *sources, size_t lens )
         {
-            using u8  = std::uint8_t;
+
+            using  u8 =       std::uint8_t;
             using cu8 = const std::uint8_t;
 
             size_t len = lens * sizeof(U);
@@ -143,7 +144,9 @@ namespace bchain {
                 size_t start    = 0;
                 size_t mod      = 0;
 
-                std::uint8_t *copy = copy_of_range( src, 0, len );
+                auto copy_data = copy_of_range( src, 0, len );
+                std::uint8_t *copy = reinterpret_cast<u8 *>(&copy_data[0]);
+
                 std::vector<std::uint8_t> tmp(tlen);
 
                 while( (static_cast<size_t>(zc) < len) && (copy[zc] == '\0')) {
@@ -169,7 +172,6 @@ namespace bchain {
                     tmp[--j] = static_cast<std::uint8_t>(code( 0 ));
                 }
 
-                free(copy);
                 memcpy( dst, &tmp[j], tlen - j);
                 dst[tlen-j] = '\0';
                 return tlen - j;
@@ -182,7 +184,6 @@ namespace bchain {
         std::string encode_check( const U *sources, size_t len )
         {
             using u8  = std::uint8_t;
-            using cu8 = const std::uint8_t;
 
             std::string res(encoded_size( len ) + 4, 0);
             size_t res_len = encode_check( reinterpret_cast<u8 *>(&res[0]),
@@ -196,7 +197,6 @@ namespace bchain {
         static
         size_t encode_check( std::uint8_t *dst, const U *sources, size_t lens )
         {
-            using u8  = std::uint8_t;
             using cu8 = const std::uint8_t;
 
             size_t len = lens * sizeof(U);
@@ -223,14 +223,10 @@ namespace bchain {
     private:
 
         static
-        std::uint8_t *copy_of_range( const std::uint8_t *src,
-                                            size_t from, size_t to )
+        std::string copy_of_range( const std::uint8_t *src,
+                                   size_t from, size_t to )
         {
-            std::uint8_t *dst =
-                    static_cast<std::uint8_t *>(malloc( (to - from) + 1));
-            memcpy(dst, &src[from], to - from);
-            dst[to - from] = '\0';
-            return dst;
+            return std::string( &src[from], &src[to] );
         }
 
         static

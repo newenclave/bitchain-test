@@ -70,8 +70,8 @@ namespace {
 int main( )
 {
     //auto k = crypto::ec_key::generate( );
-    auto k  = crypto::key_pair::create_private( priv_bytes, sizeof(priv_bytes) );
-    auto pk = crypto::key_pair::create_public(  pub_bytes,  sizeof(pub_bytes) );
+    auto k  = crypto::ec_key::create_private( priv_bytes, sizeof(priv_bytes) );
+    auto pk = crypto::ec_key::create_public(  pub_bytes,  sizeof(pub_bytes) );
 
     auto digest    = hash::sha256::get_string( message.c_str( ),
                                                message.size( ) );

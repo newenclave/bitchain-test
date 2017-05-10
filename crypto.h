@@ -109,7 +109,7 @@ namespace bchain { namespace crypto {
         {
             auto len = BN_num_bytes( bn );
             if( len > 0 ) {
-                std::string bytes(len, '\0');
+                std::string bytes(static_cast<size_t>(len), '\0');
                 BN_bn2bin( bn, reinterpret_cast<std::uint8_t *>(&bytes[0]) );
                 return bytes;
             }
@@ -121,8 +121,8 @@ namespace bchain { namespace crypto {
         {
             bignum bn;
             BN_bin2bn( reinterpret_cast<const std::uint8_t *>(&bytes[0]),
-                       bytes.size( ), bn.get( ) );
-            return std::move(bn);
+                       static_cast<int>(bytes.size( )), bn.get( ) );
+            return bn;
         }
 
         BITCHAIN_CRYPTO_COMMON_IMPL(bignum, BIGNUM);
@@ -242,6 +242,68 @@ namespace bchain { namespace crypto {
             return std::string( );
         }
 
+        template <typename U>
+        static
+        ec_key create_private( const U* priv_bytes, size_t lens )
+        {
+            ec_key res;
+            ec_key k(EC_KEY_new_by_curve_name(NID_secp256k1));
+            size_t len = lens * sizeof(U);
+
+            if( k ) {
+                bignum  priv;
+                if( !priv ) {
+                    return res;
+                }
+
+                auto pb = reinterpret_cast<const std::uint8_t *>(priv_bytes);
+
+                BN_bin2bn( pb, static_cast<int>(len), priv.get( ) );
+                if( 1 != EC_KEY_set_private_key( k.get( ), priv.get( ) ) ) {
+                    return res;
+                }
+
+                const EC_GROUP *group = EC_KEY_get0_group(k.get( ));
+                ec_point pub(group);
+                bn_ctx   ctx;
+
+                if( !pub || !ctx || !group ) {
+                    return res;
+                }
+
+                if( 1 != EC_POINT_mul( group, pub.get( ), priv.get( ),
+                                       nullptr, nullptr,  ctx.get( ) ) )
+                {
+                    return res;
+                }
+
+                if( 1 != EC_KEY_set_public_key(k.get( ), pub.get( ) ) ) {
+                    return res;
+                }
+
+                res.swap( k );
+            }
+            return res;
+        }
+
+        template <typename U>
+        static
+        ec_key create_public( const U* pub_bytes, size_t lens )
+        {
+            ec_key res;
+            ec_key k(EC_KEY_new_by_curve_name(NID_secp256k1));
+            size_t len = lens * sizeof(U);
+
+            if( k ) {
+                auto pbc = reinterpret_cast<const std::uint8_t *>(pub_bytes);
+                EC_KEY *kk = k.get( );
+                if( o2i_ECPublicKey( &kk, &pbc, static_cast<int>(len) ) ) {
+                    res.swap( k );
+                }
+            }
+            return res;
+        }
+
         BITCHAIN_CRYPTO_COMMON_IMPL(ec_key, EC_KEY);
     };
 
@@ -300,7 +362,7 @@ namespace bchain { namespace crypto {
         std::string to_der( const EC_KEY *k ) const
         {
             auto t1 = ECDSA_size( k );
-            std::string der(t1, '\0');
+            std::string der( static_cast<size_t>(t1), '\0');
             auto der_copy = reinterpret_cast<std::uint8_t *>(&der[0]);
             i2d_ECDSA_SIG( get( ), &der_copy );
             return der;
@@ -310,7 +372,8 @@ namespace bchain { namespace crypto {
         signature from_der( const std::string &der )
         {
             auto copy = reinterpret_cast<const std::uint8_t *>(&der[0]);
-            return signature( d2i_ECDSA_SIG( nullptr, &copy, der.size( ) ) );
+            return signature( d2i_ECDSA_SIG( nullptr, &copy,
+                                             static_cast<int>(der.size( ) ) ) );
         }
 
     public:
@@ -320,71 +383,6 @@ namespace bchain { namespace crypto {
 
 #undef BITCHAIN_CRYPTO_COMMON_IMPL
 
-    struct key_pair {
-
-        static const size_t private_bytes_length = 32;
-        using private_bytes_block = std::uint8_t[private_bytes_length];
-
-        template <typename U>
-        static
-        ec_key create_private( const U* priv_bytes, size_t len )
-        {
-            ec_key res;
-            ec_key k(EC_KEY_new_by_curve_name(NID_secp256k1));
-            if( k ) {
-                bignum  priv;
-                if( !priv ) {
-                    return res;
-                }
-
-                auto pb = reinterpret_cast<const std::uint8_t *>(priv_bytes);
-
-                BN_bin2bn( pb, len, priv.get( ) );
-                if( 1 != EC_KEY_set_private_key( k.get( ), priv.get( ) ) ) {
-                    return res;
-                }
-
-                const EC_GROUP *group = EC_KEY_get0_group(k.get( ));
-                ec_point pub(group);
-                bn_ctx   ctx;
-
-                if( !pub || !ctx || !group ) {
-                    return res;
-                }
-
-                if( 1 != EC_POINT_mul( group, pub.get( ), priv.get( ),
-                                       nullptr, nullptr,  ctx.get( ) ) )
-                {
-                    return res;
-                }
-
-                if( 1 != EC_KEY_set_public_key(k.get( ), pub.get( ) ) ) {
-                    return res;
-                }
-
-                res.swap( k );
-            }
-            return res;
-        }
-
-        template <typename U>
-        static
-        ec_key create_public( const U* pub_bytes, size_t len )
-        {
-            ec_key res;
-            ec_key k(EC_KEY_new_by_curve_name(NID_secp256k1));
-
-            if( k ) {
-                auto pbc = reinterpret_cast<const std::uint8_t *>(pub_bytes);
-                EC_KEY *kk = k.get( );
-                if( o2i_ECPublicKey( &kk, &pbc, len ) ) {
-                    res.swap( k );
-                }
-            }
-            return res;
-        }
-
-    };
 }}
 
 #endif // CRYPTO_H
