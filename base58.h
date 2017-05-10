@@ -181,6 +181,18 @@ namespace bchain {
 
         template <typename U>
         static
+        std::string encode( const U *sources, size_t lens )
+        {
+            size_t len = lens * sizeof(lens);
+            std::string res( encoded_size( len ) + 1, '\0' );
+            size_t enc = encode( reinterpret_cast<std::uint8_t *>(&res[0]),
+                                 sources, lens );
+            res.resize( enc );
+            return res;
+        }
+
+        template <typename U>
+        static
         std::string encode_check( const U *sources, size_t len )
         {
             using u8  = std::uint8_t;
@@ -209,7 +221,7 @@ namespace bchain {
             tmp.resize( tmp.size( ) + 4 );
 
             std::uint8_t digit[hash::sha256::digit_length];
-            hash::sha256::get( digit, sources, lens );
+            hash::hash256::get( digit, sources, lens );
 
             tmp[len + 0] = static_cast<char>(digit[0]);
             tmp[len + 1] = static_cast<char>(digit[1]);

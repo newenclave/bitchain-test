@@ -135,9 +135,9 @@ namespace bchain { namespace hash {
         static
         void append( const U *dat, size_t len, std::string &out )
         {
-            auto old = out.size( );
-            out.resize( old +  digit_length );
-            get( &out[old], dat, len );
+            digit_block dst;
+            get( dst, dat, len );
+            out.append( &dst[0], &dst[digit_length] );
         }
 
     };
@@ -154,7 +154,7 @@ namespace bchain { namespace hash {
             sha256::digit_block first_dst;
 
             sha256::get( first_dst, dat, len );
-            sha256::get( dst, first_dst, sha256::digit_length );
+            ripemd160::get( dst, first_dst, sha256::digit_length );
         }
 
         template <typename U>
@@ -170,9 +170,9 @@ namespace bchain { namespace hash {
         static
         void append( const U *dat, size_t len, std::string &out )
         {
-            auto old = out.size( );
-            out.resize( old +  digit_length );
-            get( &out[old], dat, len );
+            digit_block dst;
+            get( dst, dat, len );
+            out.append( &dst[0], &dst[digit_length] );
         }
 
     };

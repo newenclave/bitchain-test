@@ -64,10 +64,72 @@ namespace {
         0x20, 0xe1, 0xb7, 0x83,
         0x60
     };
+
+    uint8_t bytes_for_base[] = {
+        0x73, 0xb7, 0xb2, 0x1c, 0x26, 0xc1, 0x7b, 0x72,
+        0x24, 0xdb, 0x60, 0xff, 0x7d, 0xd7, 0xe4, 0xc6,
+        0x48, 0xf5, 0x6c, 0x70, 0x24, 0x4e, 0xa6, 0xc4,
+        0xb6, 0x94, 0x1c, 0x0c, 0xbd, 0x16, 0x8c, 0x30
+    };
+
     const std::string message = "This is a very confidential message\n";
 }
 
+std::string make_p2pkn( )
+{
+    std::string res;
+    res.push_back( 0x6f );
+    hash::hash160::append( pub_bytes, sizeof(pub_bytes), res );
+
+    auto h = hash::hash256::get_string( res.c_str( ), res.size( ) );
+    res.append( h.begin( ), h.begin( ) + 4 );
+
+    return base58::encode( res );
+}
+
+std::string make_wif( )
+{
+    std::string res;
+    res.push_back( 0xef );
+    res.append( &priv_bytes[0], &priv_bytes[sizeof(priv_bytes)] );
+    res.push_back( 0x01 );
+
+    auto hash = hash::hash256::get_string( res.c_str( ), res.size( ) );
+    res.append( hash.begin( ), hash.begin( ) + 4 );
+
+    return base58::encode( res );
+}
+
 int main( )
+{
+    auto base = base58::encode( bytes_for_base, sizeof(bytes_for_base) );
+    dumper::make<>::all(base.c_str( ), base.size( ),
+                        std::cout << "Base58: \n") << "\n";
+
+    auto addr = hash::hash160::get_string(pub_bytes, sizeof(pub_bytes));
+    addr.insert(addr.begin(), 0x6f);
+
+    auto chcked = base58::encode_check( addr.c_str( ), addr.size( ) );
+    auto wif    = make_wif( );
+    auto p2pkn  = make_p2pkn( );
+
+    dumper::make<>::all(chcked.c_str( ), chcked.size( ),
+                        std::cout << "Checked: \n") << "\n";
+
+    std::cout << "WIF: " << wif << "\n";
+    std::cout << "p2p: " << p2pkn << "\n";
+
+    auto dec = base58::decode( base );
+    dumper::make<>::all(dec.c_str( ), dec.size( ),
+                        std::cout << "Decode: \n") << "\n";
+
+    std::cout << (std::string(&bytes_for_base[0],
+                              &bytes_for_base[sizeof(bytes_for_base)]) == dec)
+            << "\n";
+
+}
+
+int sign( )
 {
     //auto k = crypto::ec_key::generate( );
     auto k  = crypto::ec_key::create_private( priv_bytes, sizeof(priv_bytes) );
