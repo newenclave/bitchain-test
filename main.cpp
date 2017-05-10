@@ -147,32 +147,29 @@ struct p2pkn {
     }
 };
 
-std::string make_p2pkn( )
-{
-    std::string res;
-    res.push_back( 0x6f );
-    hash::hash160::append( pub_bytes, sizeof(pub_bytes), res );
-
-    auto h = hash::hash256::get_string( res.c_str( ), res.size( ) );
-    res.append( h.begin( ), h.begin( ) + 4 );
-
-    return base58::encode( res );
-}
-
-std::string make_wif( )
-{
-    std::string res;
-    res.push_back( 0xef );
-    res.append( &priv_bytes[0], &priv_bytes[sizeof(priv_bytes)] );
-    res.push_back( 0x01 );
-
-    auto hash = hash::hash256::get_string( res.c_str( ), res.size( ) );
-    res.append( hash.begin( ), hash.begin( ) + 4 );
-
-    return base58::encode( res );
-}
-
 int main( )
+{
+    auto k = crypto::ec_key::create_private(priv_bytes, sizeof(priv_bytes));
+    //auto k = crypto::ec_key::create_public(pub_bytes, sizeof(pub_bytes));
+
+    k.set_conv_compressed( true );
+    auto pb = k.get_public_bytes( );
+    k.set_conv_compressed( false );
+    auto pbu = k.get_public_bytes( );
+
+    dumper::make<>::all( pb.c_str( ), pb.size( ),
+                         std::cout << "Compressed: \n") << "\n";
+
+    dumper::make<>::all( pbu.c_str( ), pbu.size( ),
+                         std::cout << "Uncompressed: \n") << "\n";
+
+
+    std::cout << k.get_conv_compressed( ) << "\n";
+
+    return 0;
+}
+
+int wif_p2p( )
 {
     auto base = base58::encode( bytes_for_base, sizeof(bytes_for_base) );
     dumper::make<>::all(base.c_str( ), base.size( ),
@@ -182,8 +179,8 @@ int main( )
     addr.insert(addr.begin(), 0x6f);
 
     auto chcked = base58::encode_check( addr.c_str( ), addr.size( ) );
-    auto wif    = make_wif( );
-    auto p2pkn  = make_p2pkn( );
+    auto wif    = wif::create( priv_bytes, sizeof(priv_bytes), 0xef, true );
+    auto p2pkn  = p2pkn::create( pub_bytes, sizeof(pub_bytes), 0x6f );
 
     dumper::make<>::all(chcked.c_str( ), chcked.size( ),
                         std::cout << "Checked: \n") << "\n";
