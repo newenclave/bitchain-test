@@ -75,6 +75,14 @@ namespace bchain { namespace address {
             using err = result_type::error_arg;
             using val = result_type::value_arg;
 
+            /// uncompressed = version (1)
+            ///              + private bytes (32)
+            ///              + hash (4) = 37
+            /// compressed   = version (1)
+            ///              + private bytes (32)
+            ///              + compressed flag (1)
+            ///              + hash (4) = 38
+
             enum { UNCOMPRESSED_SIZE = 37, COMPRESSED_SIZE = 38 };
 
             auto decoded = base58::decode( w );
