@@ -79,8 +79,8 @@ namespace bchain { namespace address {
 
             auto decoded = base58::decode( w );
 
-            if(  decoded.size( ) != UNCOMPRESSED_SIZE
-              && decoded.size( ) != COMPRESSED_SIZE )
+            if(  ( decoded.size( ) != UNCOMPRESSED_SIZE )
+              && ( decoded.size( ) != COMPRESSED_SIZE ) )
             {
                 return result_type(err("Invalid WIF. Bad length"));
             }
