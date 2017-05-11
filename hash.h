@@ -13,8 +13,8 @@ namespace bchain { namespace hash {
     template <typename ParentHash, size_t DigitLen>
     struct common {
 
+        enum { digit_length = DigitLen };
         using parent_type = ParentHash;
-        static const size_t digit_length = DigitLen;
         using digit_block = std::uint8_t[digit_length];
 
         template <typename U>
@@ -52,7 +52,7 @@ namespace bchain { namespace hash {
 
     struct sha256: public common<sha256, SHA256_DIGEST_LENGTH> {
 
-        static const size_t digit_length = SHA256_DIGEST_LENGTH;
+        enum { digit_length = SHA256_DIGEST_LENGTH };
         using digit_block = std::uint8_t[digit_length];
 
         template <typename U>
@@ -70,7 +70,8 @@ namespace bchain { namespace hash {
     };
 
     struct ripemd160: public common<ripemd160, RIPEMD160_DIGEST_LENGTH> {
-        static const size_t digit_length = RIPEMD160_DIGEST_LENGTH;
+
+        enum { digit_length = RIPEMD160_DIGEST_LENGTH };
         using digit_block = std::uint8_t[digit_length];
 
         template <typename U>
@@ -88,8 +89,8 @@ namespace bchain { namespace hash {
 
     struct hash256: public common<hash256, sha256::digit_length> {
 
-        static const size_t digit_length = sha256::digit_length;
-        using digit_block                = sha256::digit_block;
+        enum { digit_length = sha256::digit_length };
+        using digit_block = sha256::digit_block;
 
         template <typename U>
         static
@@ -102,8 +103,8 @@ namespace bchain { namespace hash {
 
     struct hash160: public common<hash160, ripemd160::digit_length> {
 
-        static const size_t digit_length = ripemd160::digit_length;
-        using digit_block                = ripemd160::digit_block;
+        enum { digit_length = ripemd160::digit_length };
+        using digit_block   = ripemd160::digit_block;
 
         template <typename U>
         static
