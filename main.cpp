@@ -175,6 +175,7 @@ int test( )
 
 int main( )
 {
+
     auto base = base58::encode( bytes_for_base, sizeof(bytes_for_base) );
     dumper::make<>::all(base.c_str( ), base.size( ),
                         std::cout << "Base58: \n") << "\n";
@@ -189,8 +190,12 @@ int main( )
     dumper::make<>::all(chcked.c_str( ), chcked.size( ),
                         std::cout << "Checked: \n") << "\n";
 
-    std::cout << "WIF: " << wif << "\n";
-    std::cout << "p2p: " << p2pkn << "\n";
+    std::cout << "WIF:    " << wif << "\n";
+    std::cout << "WIF ex: " << "cNKkmrwHuShs2mvkVEKfXULxXhxRo3yy1cK6sq62uBp2Pc8Lsa76" << "\n";
+
+    std::cout << "p2p:    " << p2pkn << "\n";
+    std::cout << "p2p ex: " << "mqMi3XYqsPvBWtrJTk8euPWDVmFTZ5jHuK" << "\n";
+
 
     auto dec = base58::decode( base );
     dumper::make<>::all(dec.c_str( ), dec.size( ),
