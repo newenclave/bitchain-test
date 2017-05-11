@@ -73,6 +73,8 @@ namespace {
 int main( )
 {
     auto k = crypto::ec_key::generate( );
+
+    k.set_conv_compressed( false );
     auto wc = wif::create( k, 0x80 );
 
     k.set_conv_compressed( true );
