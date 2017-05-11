@@ -15,6 +15,7 @@
 #include "serializer.h"
 #include "parser.h"
 #include "varint.h"
+#include "address.h"
 
 #include <openssl/bn.h>
 #include <openssl/ec.h>
@@ -31,6 +32,7 @@
 
 using namespace bchain;
 using namespace bchain::hash;
+using namespace bchain::address;
 using namespace etool;
 
 namespace {
@@ -67,81 +69,6 @@ namespace {
     const std::string message = "This is a very confidential message\n";
 }
 
-// Wallet Import Format
-struct wif {
-
-    static
-    std::string create( const crypto::ec_key &k,
-                        std::uint8_t prefix, bool compress_public )
-    {
-        auto private_bytes = k.get_private_bytes( );
-        return create( private_bytes, prefix, compress_public );
-    }
-
-    static
-    std::string create( const std::string &private_bytes,
-                        std::uint8_t prefix, bool compress_public )
-    {
-        using cu8 = const std::uint8_t;
-        auto u8data = reinterpret_cast<cu8 *>(private_bytes.c_str( ));
-        return create( u8data, private_bytes.size( ), prefix, compress_public );
-    }
-
-    static
-    std::string create( const std::uint8_t *priv_bytes, size_t plen,
-                        std::uint8_t prefix, bool compress_public )
-    {
-        std::string res;
-
-        res.push_back( static_cast<char>(prefix) );
-        res.append( &priv_bytes[0], &priv_bytes[plen] );
-
-        if( compress_public ) {
-            res.push_back( 0x01 );
-        }
-
-        hash::hash256::digit_block digit;
-        hash::hash256::get( digit, res.c_str( ), res.size( ) );
-        res.append( &digit[0], &digit[4] );
-
-        return base58::encode( res );
-    }
-};
-
-// pay-to-public-key-hash
-struct p2pkh {
-
-    static
-    std::string create( crypto::ec_key &k, std::uint8_t prefix )
-    {
-        auto pub_bytes = k.get_public_bytes( );
-        return create( pub_bytes, prefix );
-    }
-
-    static
-    std::string create( const std::string &pub_bytes, std::uint8_t prefix )
-    {
-        using cu8 = const std::uint8_t;
-        auto u8data = reinterpret_cast<cu8 *>(pub_bytes.c_str( ));
-        return create( u8data, pub_bytes.size( ), prefix );
-    }
-
-    static
-    std::string create( const std::uint8_t *pub_bytes, size_t len,
-                        std::uint8_t prefix )
-    {
-        std::string res;
-        res.push_back( static_cast<char>(prefix) );
-
-        hash::hash160::append( pub_bytes, len, res );
-
-        hash::hash256::digit_block digit;
-        hash::hash256::get( digit, res.c_str( ), res.size( ) );
-        res.append( &digit[0], &digit[4] );
-
-        return base58::encode( res );
-    }
-};
 
 int test( )
 {
@@ -167,7 +94,6 @@ int test( )
 
 int main( )
 {
-
     auto base = base58::encode( bytes_for_base, sizeof(bytes_for_base) );
     dumper::make<>::all(base.c_str( ), base.size( ),
                         std::cout << "Base58: \n") << "\n";
@@ -178,6 +104,8 @@ int main( )
     auto chcked = base58::encode_check( addr.c_str( ), addr.size( ) );
     auto wif    = wif::create( priv_bytes, sizeof(priv_bytes), 0xef, true );
     auto p2pkn  = p2pkh::create( pub_bytes, sizeof(pub_bytes), 0x6f );
+    auto fwif   = p2pkh::from_wif( wif );
+
 
     dumper::make<>::all(chcked.c_str( ), chcked.size( ),
                         std::cout << "Checked: \n") << "\n";
@@ -186,8 +114,8 @@ int main( )
     std::cout << "WIF ex: " << "cNKkmrwHuShs2mvkVEKfXULxXhxRo3yy1cK6sq62uBp2Pc8Lsa76" << "\n";
 
     std::cout << "p2p:    " << p2pkn << "\n";
+    std::cout << "p2p fw: " << *fwif << "\n";
     std::cout << "p2p ex: " << "mqMi3XYqsPvBWtrJTk8euPWDVmFTZ5jHuK" << "\n";
-
 
     auto dec = base58::decode( base );
     dumper::make<>::all(dec.c_str( ), dec.size( ),

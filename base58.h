@@ -212,24 +212,25 @@ namespace bchain {
             using cu8 = const std::uint8_t;
 
             size_t len = lens * sizeof(U);
-            const std::uint8_t * src = reinterpret_cast<cu8 *>(sources);
+            auto src   = reinterpret_cast<cu8 *>(sources);
 
             std::string tmp;
+
             tmp.reserve( len + 4 );
+
             tmp.assign( src, src + len );
 
             tmp.resize( tmp.size( ) + 4 );
 
-            std::uint8_t digit[hash::sha256::digit_length];
+            hash::hash256::digit_block digit;
             hash::hash256::get( digit, sources, lens );
 
-            tmp[len + 0] = static_cast<char>(digit[0]);
-            tmp[len + 1] = static_cast<char>(digit[1]);
-            tmp[len + 2] = static_cast<char>(digit[2]);
-            tmp[len + 3] = static_cast<char>(digit[3]);
+            tmp[len + 0] = static_cast<char>( digit[0] );
+            tmp[len + 1] = static_cast<char>( digit[1] );
+            tmp[len + 2] = static_cast<char>( digit[2] );
+            tmp[len + 3] = static_cast<char>( digit[3] );
 
-            size_t res_len = encode( dst, tmp.c_str( ), tmp.size( ) );
-            return res_len;
+            return encode( dst, tmp.c_str( ), tmp.size( ) );
         }
 
     private:
