@@ -26,29 +26,18 @@ namespace bchain {
             return ( len / 4 ) * 3;
         }
 
+        template <typename U>
         static
-        std::string encode( const std::string &src )
+        std::string decode( const U *data, size_t lens )
         {
-            using u8  = std::uint8_t;
-            using cu8 = const std::uint8_t;
-            std::string tmp(encoded_size( src.size( ) ), 0);
-            size_t len = encode( reinterpret_cast<u8 *>(&tmp[0]),
-                         reinterpret_cast<cu8 *>(src.c_str( )), src.size( ) );
-            tmp.resize( len );
-            return tmp;
-        }
-
-        static
-        std::string decode( const std::string &src )
-        {
-            std::string tmp(decoded_size( src.size( ) ), 0);
+            std::string tmp(decoded_size( lens * sizeof(U) ), 0);
 
             using u8  = std::uint8_t;
             using cu8 = const std::uint8_t;
 
             int len = decode( reinterpret_cast<u8 *>(&tmp[0]),
-                              reinterpret_cast<cu8 *>(src.c_str( )),
-                              src.size( ) );
+                              reinterpret_cast<cu8 *>(data),
+                              lens * sizeof(U) );
 
             if( len > 0 ) {
                 tmp.resize( static_cast<size_t>(len) );
@@ -56,6 +45,12 @@ namespace bchain {
                 tmp.clear( );
             }
             return tmp;
+        }
+
+        static
+        std::string decode( const std::string &src )
+        {
+            return decode(src.c_str( ), src.size( ));
         }
 
         template <typename U>
@@ -122,6 +117,19 @@ namespace bchain {
                 return static_cast<int>(len - (j-zc));
             }
             return 0;
+        }
+
+
+        static
+        std::string encode( const std::string &src )
+        {
+            using u8  = std::uint8_t;
+            using cu8 = const std::uint8_t;
+            std::string tmp(encoded_size( src.size( ) ), 0);
+            size_t len = encode( reinterpret_cast<u8 *>(&tmp[0]),
+                         reinterpret_cast<cu8 *>(src.c_str( )), src.size( ) );
+            tmp.resize( len );
+            return tmp;
         }
 
         template <typename U>
@@ -231,6 +239,37 @@ namespace bchain {
             tmp[len + 3] = static_cast<char>( digit[3] );
 
             return encode( dst, tmp.c_str( ), tmp.size( ) );
+        }
+
+        template <typename U>
+        static
+        std::pair<std::string, bool> decode_check( const U *src, size_t len )
+        {
+            auto dec = decode( src, len );
+
+            if( dec.size( ) < 4 ) {
+                return std::make_pair(dec, false);
+            }
+
+            hash::hash256::digit_block digit;
+
+            auto body_len = dec.size( ) - 4;
+
+            hash::hash256::get(digit, dec.c_str( ), body_len );
+
+            bool valid = dec[body_len + 0] == digit[0]
+                      && dec[body_len + 1] == digit[1]
+                      && dec[body_len + 2] == digit[2]
+                      && dec[body_len + 3] == digit[3];
+
+            dec.resize(body_len);
+            return std::make_pair(dec, valid);
+        }
+
+        static
+        std::pair<std::string, bool> decode_check( const std::string &src )
+        {
+            return decode_check(src.c_str( ), src.size( ));
         }
 
     private:
