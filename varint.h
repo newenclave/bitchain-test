@@ -1,9 +1,10 @@
 #ifndef VARINT_H
 #define VARINT_H
 
+#include <string>
+
 #include "byte_order.h"
 #include "etool/details/byte_order.h"
-
 
 namespace bchain {
 
@@ -11,8 +12,8 @@ namespace bchain {
 
         typedef std::uint64_t size_type;
 
-        static const size_t min_length = sizeof(std::uint8_t);
-        static const size_t max_length = sizeof(size_type) + min_length;
+        static const std::size_t min_length = sizeof(std::uint8_t);
+        static const std::size_t max_length = sizeof(size_type) + min_length;
 
         using u16_little = etool::details::byte_order_little<std::uint16_t>;
         using u32_little = etool::details::byte_order_little<std::uint32_t>;
@@ -30,7 +31,7 @@ namespace bchain {
         };
 
         static
-        size_t len_by_prefix( std::uint8_t prefix )
+        std::size_t len_by_prefix( std::uint8_t prefix )
         {
             switch (prefix) {
             case PREFIX_VARINT64:
@@ -46,7 +47,7 @@ namespace bchain {
         }
 
         static
-        size_t result_length( size_type len )
+        std::size_t result_length( size_type len )
         {
             if( len < PREFIX_VARINT_MIN ) {
                 return sizeof(std::uint8_t);
@@ -60,7 +61,7 @@ namespace bchain {
         }
 
         static
-        size_t packed_length( const void *data, size_t len )
+        std::size_t packed_length( const void *data, size_t len )
         {
             if( len > 0 ) {
                 auto u8 = *static_cast<const std::uint8_t *>(data);
@@ -73,7 +74,7 @@ namespace bchain {
 
         template <typename U>
         static
-        size_t write( size_type size, U *result )
+        std::size_t write( size_type size, U *result )
         {
             std::uint8_t *res  = reinterpret_cast<std::uint8_t *>(result);
             if( size < PREFIX_VARINT_MIN ) {
@@ -94,7 +95,7 @@ namespace bchain {
         static
         void append( size_type size, std::string &res )
         {
-            size_t last = res.size( );
+            std::size_t last = res.size( );
             res.resize(last + result_length(size));
             write( size, &res[last] );
         }
@@ -105,7 +106,7 @@ namespace bchain {
         {
             const std::uint8_t *d = static_cast<const std::uint8_t *>(data);
             length = length * sizeof(U);
-            size_t len_ = len_by_prefix( *d );
+            std::size_t len_ = len_by_prefix( *d );
 
             if( length < len_ ) {
                 return 0;
