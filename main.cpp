@@ -70,6 +70,28 @@ namespace {
 }
 
 
+int main( )
+{
+    auto k = crypto::ec_key::generate( );
+    auto wc = wif::create( k, 0x80 );
+
+    k.set_conv_compressed( true );
+    auto wuc = wif::create( k, 0x80 );
+
+    auto pa = p2pkh::from_wif( wc );
+    auto pau = p2pkh::from_wif( wuc );
+
+    auto up = base58::decode_check(*pa);
+    auto upu = base58::decode_check(*pau);
+
+    std::cout << wc << " " << wc.size( ) << "\n";
+    std::cout << wuc << " " << wuc.size( ) << "\n";
+
+    std::cout << pa << " " << pa->size( ) << " " << up.second << "\n";
+    std::cout << pau << " " << pau->size( ) << " " << upu.second << "\n";
+
+}
+
 int test( )
 {
     auto k = crypto::ec_key::create_private(priv_bytes, sizeof(priv_bytes));
@@ -92,7 +114,7 @@ int test( )
     return 0;
 }
 
-int main( )
+int test_wif( )
 {
     auto base = base58::encode( bytes_for_base, sizeof(bytes_for_base) );
     dumper::make<>::all(base.c_str( ), base.size( ),
