@@ -101,8 +101,9 @@ struct wif {
     {
         std::string res;
 
-        res.push_back( prefix );
+        res.push_back( static_cast<char>(prefix) );
         res.append( &priv_bytes[0], &priv_bytes[plen] );
+
         if( compress_public ) {
             res.push_back( 0x01 );
         }
@@ -138,16 +139,19 @@ struct p2pkh {
                         std::uint8_t prefix )
     {
         std::string res;
-        res.push_back( prefix );
+        res.push_back( static_cast<char>(prefix) );
+
         hash::hash160::append( pub_bytes, len, res );
-        auto h = hash::hash256::get_string( res.c_str( ), res.size( ) );
-        res.append( h.begin( ), h.begin( ) + 4 );
+
+        hash::hash256::digit_block digit;
+        hash::hash256::get( digit, res.c_str( ), res.size( ) );
+        res.append( &digit[0], &digit[4] );
 
         return base58::encode( res );
     }
 };
 
-int main( )
+int test( )
 {
     auto k = crypto::ec_key::create_private(priv_bytes, sizeof(priv_bytes));
     //auto k = crypto::ec_key::create_public(pub_bytes, sizeof(pub_bytes));
@@ -169,7 +173,7 @@ int main( )
     return 0;
 }
 
-int wif_p2p( )
+int main( )
 {
     auto base = base58::encode( bytes_for_base, sizeof(bytes_for_base) );
     dumper::make<>::all(base.c_str( ), base.size( ),
