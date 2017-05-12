@@ -21,11 +21,10 @@ namespace bchain { namespace address {
         };
 
         static
-        std::string create( const crypto::ec_key &k,
-                            std::uint8_t version, bool compress_public )
+        std::string create( const crypto::ec_key &k, std::uint8_t version )
         {
             auto private_bytes = k.get_private_bytes( );
-            return create( private_bytes, version, compress_public );
+            return create( private_bytes, version, k.get_conv_compressed( ) );
         }
 
         static
@@ -110,10 +109,10 @@ namespace bchain { namespace address {
             size_t body_len = decoded.size( ) - 4;
             hash::hash256::get( digit, decoded.c_str( ), body_len );
 
-            if(  digit[0] != decoded[body_len + 0]
-              || digit[1] != decoded[body_len + 1]
-              || digit[2] != decoded[body_len + 2]
-              || digit[3] != decoded[body_len + 3] )
+            if(  digit[0] != static_cast<std::uint8_t>(decoded[body_len + 0])
+              || digit[1] != static_cast<std::uint8_t>(decoded[body_len + 1])
+              || digit[2] != static_cast<std::uint8_t>(decoded[body_len + 2])
+              || digit[3] != static_cast<std::uint8_t>(decoded[body_len + 3]) )
             {
                 return result_type(err("Invalid WIF. Bad hash"));
             }

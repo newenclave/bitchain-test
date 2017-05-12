@@ -20,39 +20,6 @@ namespace bchain {
             return ( (len + 4) / 5 ) * 7;
         }
 
-        static
-        size_t decoded_size( size_t len )
-        {
-            return ( len / 4 ) * 3;
-        }
-
-        template <typename U>
-        static
-        std::string decode( const U *data, size_t lens )
-        {
-            std::string tmp(decoded_size( lens * sizeof(U) ), 0);
-
-            using u8  = std::uint8_t;
-            using cu8 = const std::uint8_t;
-
-            int len = decode( reinterpret_cast<u8 *>(&tmp[0]),
-                              reinterpret_cast<cu8 *>(data),
-                              lens * sizeof(U) );
-
-            if( len > 0 ) {
-                tmp.resize( static_cast<size_t>(len) );
-            } else {
-                tmp.clear( );
-            }
-            return tmp;
-        }
-
-        static
-        std::string decode( const std::string &src )
-        {
-            return decode(src.c_str( ), src.size( ));
-        }
-
         template <typename U>
         static
         int decode( std::uint8_t *dst, const U *sources, size_t lens )
@@ -119,6 +86,32 @@ namespace bchain {
             return 0;
         }
 
+        template <typename U>
+        static
+        std::string decode( const U *data, size_t lens )
+        {
+            std::string tmp( ( ( lens * sizeof(U)) / 4 * 3 + 3 ), 0);
+
+            using u8  = std::uint8_t;
+            using cu8 = const std::uint8_t;
+
+            int len = decode( reinterpret_cast<u8 *>(&tmp[0]),
+                              reinterpret_cast<cu8 *>(data),
+                              lens * sizeof(U) );
+
+            if( len > 0 ) {
+                tmp.resize( static_cast<size_t>(len) );
+            } else {
+                tmp.clear( );
+            }
+            return tmp;
+        }
+
+        static
+        std::string decode( const std::string &src )
+        {
+            return decode(src.c_str( ), src.size( ));
+        }
 
         static
         std::string encode( const std::string &src )
@@ -245,6 +238,7 @@ namespace bchain {
         static
         std::pair<std::string, bool> decode_check( const U *src, size_t len )
         {
+            using u8 = std::uint8_t;
             auto dec = decode( src, len );
 
             if( dec.size( ) < 4 ) {
@@ -257,10 +251,10 @@ namespace bchain {
 
             hash::hash256::get(digit, dec.c_str( ), body_len );
 
-            bool valid = dec[body_len + 0] == digit[0]
-                      && dec[body_len + 1] == digit[1]
-                      && dec[body_len + 2] == digit[2]
-                      && dec[body_len + 3] == digit[3];
+            bool valid = static_cast<u8>(dec[body_len + 0]) == digit[0]
+                      && static_cast<u8>(dec[body_len + 1]) == digit[1]
+                      && static_cast<u8>(dec[body_len + 2]) == digit[2]
+                      && static_cast<u8>(dec[body_len + 3]) == digit[3];
 
             dec.resize(body_len);
             return std::make_pair(dec, valid);
