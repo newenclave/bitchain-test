@@ -10,9 +10,8 @@ namespace bchain {
     struct host_byte_order {
         static bool is_big_endian( )
         {
-            typedef const unsigned short const_ushort;
-            static bool res =
-                    (*reinterpret_cast<const_ushort *>("\001") == 0x0100);
+            using cu16      = const std::uint16_t;
+            static bool res = (*reinterpret_cast<cu16 *>("\001") == 0x0100);
             return res;
         }
 
@@ -34,7 +33,7 @@ namespace bchain {
         }
 
         template <typename U>
-        static size_t write( value_type v, U *out )
+        static std::size_t write( value_type v, U *out )
         {
             const std::uint8_t *d = reinterpret_cast<const std::uint8_t *>(&v);
                   std::uint8_t *o = reinterpret_cast<      std::uint8_t *>(out);
@@ -46,7 +45,7 @@ namespace bchain {
         }
 
         template <typename U>
-        static value_type read( const U *in, size_t *len = nullptr )
+        static value_type read( const U *in, std::size_t *len = nullptr )
         {
             value_type v;
             const std::uint8_t *o = reinterpret_cast<const std::uint8_t *>(in);
@@ -81,7 +80,7 @@ namespace bchain {
         }
 
         template <typename U>
-        static size_t write( value_type v, U *out )
+        static std::size_t write( value_type v, U *out )
         {
             const std::uint8_t *d = reinterpret_cast<const std::uint8_t *>(&v);
                   std::uint8_t *o = reinterpret_cast<      std::uint8_t *>(out);
@@ -93,7 +92,7 @@ namespace bchain {
         }
 
         template <typename U>
-        static value_type read( const U *in, size_t *len = nullptr )
+        static value_type read( const U *in, std::size_t *len = nullptr )
         {
             value_type v;
             const std::uint8_t *o = reinterpret_cast<const std::uint8_t *>(in);
@@ -118,14 +117,14 @@ namespace bchain {
         }
 
         template <typename U>
-        static size_t write( value_type v, U *out )
+        static std::size_t write( value_type v, U *out )
         {
             *reinterpret_cast<std::uint8_t *>(out) = v;
             return sizeof(value_type);
         }
 
         template <typename U>
-        static value_type read( const U *in, size_t *len = nullptr )
+        static value_type read( const U *in, std::size_t *len = nullptr )
         {
             if( len ) {
                 *len = sizeof(value_type);
@@ -144,14 +143,14 @@ namespace bchain {
         }
 
         template <typename U>
-        static size_t write( value_type v, U *out )
+        static std::size_t write( value_type v, U *out )
         {
             *reinterpret_cast<std::uint8_t *>(out) = v;
             return sizeof(value_type);
         }
 
         template <typename U>
-        static value_type read( const U *in, size_t *len = nullptr )
+        static value_type read( const U *in, std::size_t *len = nullptr )
         {
             if( len ) {
                 *len = sizeof(value_type);
@@ -165,12 +164,12 @@ namespace bchain {
         typedef std::uint16_t value_type;
         static value_type value( value_type v )
         {
-            return ( ( v & 0xff00 ) >> 8 ) |
-                   ( ( v & 0x00ff ) << 8 ) ;
+            return ( static_cast<value_type>(( v & 0xff00 ) >> 8) ) |
+                   ( static_cast<value_type>(( v & 0x00ff ) << 8) ) ;
         }
 
         template <typename U>
-        static size_t write( value_type v, U *out )
+        static std::size_t write( value_type v, U *out )
         {
             std::uint8_t *o = reinterpret_cast<std::uint8_t *>(out);
             o[1] =   v       & 0xFF;
@@ -179,14 +178,14 @@ namespace bchain {
         }
 
         template <typename U>
-        static value_type read( const U *in, size_t *len = nullptr )
+        static value_type read( const U *in, std::size_t *len = nullptr )
         {
             const std::uint8_t *o = reinterpret_cast<const std::uint8_t *>(in);
             if( len ) {
                 *len = sizeof(value_type);
             }
-            return static_cast<value_type>(o[0]) << 8 |
-                   static_cast<value_type>(o[1])      ;
+            return static_cast<value_type>(o[0] << 8) |
+                   static_cast<value_type>(o[1]     ) ;
         }
     };
 
@@ -202,7 +201,7 @@ namespace bchain {
         }
 
         template <typename U>
-        static size_t write( value_type v, U *out )
+        static std::size_t write( value_type v, U *out )
         {
             std::uint8_t *o = reinterpret_cast<std::uint8_t *>(out);
             o[3] =   v         & 0xFF;
@@ -213,7 +212,7 @@ namespace bchain {
         }
 
         template <typename U>
-        static value_type read( const U *in, size_t *len = nullptr )
+        static value_type read( const U *in, std::size_t *len = nullptr )
         {
             const std::uint8_t *o = reinterpret_cast<const std::uint8_t *>(in);
             if( len ) {
@@ -244,7 +243,7 @@ namespace bchain {
 
         template <typename U>
         static
-        size_t write( value_type v, U *out )
+        std::size_t write( value_type v, U *out )
         {
             std::uint8_t *o = reinterpret_cast<std::uint8_t *>(out);
             o[7] =   v         & 0xFF;
@@ -260,7 +259,7 @@ namespace bchain {
 
         template <typename U>
         static
-        value_type read( const U *in, size_t *len = nullptr )
+        value_type read( const U *in, std::size_t *len = nullptr )
         {
             const std::uint8_t *o = reinterpret_cast<const std::uint8_t *>(in);
             if( len ) {

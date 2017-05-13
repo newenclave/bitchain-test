@@ -67,6 +67,24 @@ namespace {
     };
 
     const std::string message = "This is a very confidential message\n";
+
+
+    template <typename Os, typename B = std::uint8_t>
+    Os &dump( const std::string &t, Os &o )
+    {
+        return dumper::make<B>::all( t.c_str( ), t.size( ), o );
+    }
+
+    std::string hex( const std::string &in )
+    {
+        return dumper::make<>::to_hex( in.c_str( ), in.size( ), ":" );
+    }
+
+    std::string hex_c( const std::string &in )
+    {
+        return dumper::make<>::to_hex( in.c_str( ), in.size( ), ", ", "0x" );
+    }
+
 }
 
 
@@ -80,6 +98,8 @@ int main( )
     k.set_conv_compressed( true );
     auto wuc = wif::create( k, 0x80 );
 
+    k.set_conv_compressed( false );
+
     auto pa = p2pkh::from_wif( wc );
     auto pau = p2pkh::from_wif( wuc );
 
@@ -91,6 +111,9 @@ int main( )
 
     std::cout << pa << " " << pa->size( ) << " " << up.second << "\n";
     std::cout << pau << " " << pau->size( ) << " " << upu.second << "\n";
+
+    std::cout << hex(k.get_private_bytes( )) << "\n";
+    std::cout << hex(k.get_public_bytes( )) << "\n";
 
 }
 
@@ -104,12 +127,8 @@ int test( )
     k.set_conv_compressed( false );
     auto pbu = k.get_public_bytes( );
 
-    dumper::make<>::all( pb.c_str( ), pb.size( ),
-                         std::cout << "Compressed: \n") << "\n";
-
-    dumper::make<>::all( pbu.c_str( ), pbu.size( ),
-                         std::cout << "Uncompressed: \n") << "\n";
-
+    dump( pb, std::cout << "Compressed: \n") << "\n";
+    dump( pbu, std::cout << "Uncompressed: \n") << "\n";
 
     std::cout << k.get_conv_compressed( ) << "\n";
 
@@ -119,8 +138,8 @@ int test( )
 int test_wif( )
 {
     auto base = base58::encode( bytes_for_base, sizeof(bytes_for_base) );
-    dumper::make<>::all(base.c_str( ), base.size( ),
-                        std::cout << "Base58: \n") << "\n";
+
+    dump(base, std::cout << "Base58: \n") << "\n";
 
     auto addr = hash::hash160::get_string(pub_bytes, sizeof(pub_bytes));
     addr.insert(addr.begin(), 0x6f);
@@ -130,25 +149,22 @@ int test_wif( )
     auto p2pkn  = p2pkh::create( pub_bytes, sizeof(pub_bytes), 0x6f );
     auto fwif   = p2pkh::from_wif( wif );
 
-
-    dumper::make<>::all(chcked.c_str( ), chcked.size( ),
-                        std::cout << "Checked: \n") << "\n";
+    dump(chcked, std::cout << "Checked: \n") << "\n";
 
     std::cout << "WIF:    " << wif << "\n";
     std::cout << "WIF ex: " << "cNKkmrwHuShs2mvkVEKfXULxXhxRo3yy1cK6sq62uBp2Pc8Lsa76" << "\n";
 
     std::cout << "p2p:    " << p2pkn << "\n";
-    std::cout << "p2p fw: " << *fwif << "\n";
+    std::cout << "p2p fw: " << fwif << "\n";
     std::cout << "p2p ex: " << "mqMi3XYqsPvBWtrJTk8euPWDVmFTZ5jHuK" << "\n";
 
     auto dec = base58::decode( base );
-    dumper::make<>::all(dec.c_str( ), dec.size( ),
-                        std::cout << "Decode: \n") << "\n";
+    dump(dec, std::cout << "Decode: \n") << "\n";
 
     std::cout << (std::string(&bytes_for_base[0],
                               &bytes_for_base[sizeof(bytes_for_base)]) == dec)
             << "\n";
-
+    return 0;
 }
 
 int sign( )
@@ -165,15 +181,12 @@ int sign( )
     auto der = signature.to_der( k.get( ) );
     auto sig = crypto::signature::from_der( der );
 
-    dumper::make<>::all(der.c_str( ), der.size( ),
-                        std::cout << "DER: \n") << "\n";
+    dump(der, std::cout << "DER: \n") << "\n";
 
     auto verified = sig.verify( digest.c_str( ), digest.size( ), pk.get( ) );
 
     std::cout << verified << "\n";
-
-    dumper::make<>::all(digest.c_str( ), digest.size( ),
-                        std::cout << "SHA256: \n") << "\n";
+    dump(digest, std::cout << "SHA256: \n") << "\n";
 
     return 0;
 }
