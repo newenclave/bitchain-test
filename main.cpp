@@ -123,7 +123,7 @@ namespace {
 }
 
 
-int main0( )
+int main( )
 {
     auto k = crypto::ec_key::generate( );
 
@@ -147,14 +147,14 @@ int main0( )
     std::cout << pa << " " << pa->size( ) << " " << up.second << "\n";
     std::cout << pau << " " << pau->size( ) << " " << upu.second << "\n";
 
-    std::cout << hex_c(k.get_private_bytes( )) << "\n";
-    std::cout << hex_c(k.get_public_bytes( )) << "\n";
+    std::cout << hex(k.get_private_bytes( )) << "\n==============\n";
+    std::cout << hex(k.get_public_bytes( )) << "\n==============\n";
     k.set_conv_compressed( true );
-    std::cout << hex_c(k.get_public_bytes( )) << "\n";
+    std::cout << hex(k.get_public_bytes( )) << "\n==============\n";
 
 }
 
-int main( )
+int main1( )
 {
     auto k = crypto::ec_key::create_private(priv_bytes2, sizeof(priv_bytes2));
     //auto k = crypto::ec_key::create_public(pub_bytes, sizeof(pub_bytes));
