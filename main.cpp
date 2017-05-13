@@ -103,6 +103,13 @@ namespace {
         return dumper::make<B>::all( t.c_str( ), t.size( ), o );
     }
 
+    template <typename Os, typename B = std::uint8_t>
+    Os &dump_pub( const std::string &t, Os &o )
+    {
+        dumper::make<B>::all( t.c_str( ), 1, o ) << "\n";
+        return dumper::make<B>::all( t.c_str( ) + 1, t.size( ) - 1, o );
+    }
+
     std::string hex( const std::string &in )
     {
         return dumper::make<>::to_hex( in.c_str( ), in.size( ), ":" );
@@ -116,7 +123,7 @@ namespace {
 }
 
 
-int main( )
+int main0( )
 {
     auto k = crypto::ec_key::generate( );
 
@@ -147,18 +154,21 @@ int main( )
 
 }
 
-int test( )
+int main( )
 {
-    auto k = crypto::ec_key::create_private(priv_bytes, sizeof(priv_bytes));
+    auto k = crypto::ec_key::create_private(priv_bytes2, sizeof(priv_bytes2));
     //auto k = crypto::ec_key::create_public(pub_bytes, sizeof(pub_bytes));
 
     k.set_conv_compressed( true );
     auto pb = k.get_public_bytes( );
+
     k.set_conv_compressed( false );
     auto pbu = k.get_public_bytes( );
 
-    dump( pb, std::cout << "Compressed: \n") << "\n";
-    dump( pbu, std::cout << "Uncompressed: \n") << "\n";
+    dump_pub( pb, std::cout << "Compressed: \n") << "\n";
+    dump_pub( pbu, std::cout << "Uncompressed: \n") << "\n";
+
+    dump( k.get_private_bytes( ), std::cout << "Private: \n") << "\n";
 
     std::cout << k.get_conv_compressed( ) << "\n";
 
