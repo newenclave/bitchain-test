@@ -123,7 +123,7 @@ namespace {
 }
 
 
-int main( )
+int main0( )
 {
     auto k = crypto::ec_key::generate( );
 
