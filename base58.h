@@ -223,7 +223,7 @@ namespace bchain {
 
             tmp.resize( tmp.size( ) + 4 );
 
-            hash::hash256::digit_block digit;
+            hash::hash256::digest_block digit;
             hash::hash256::get( digit, sources, lens );
 
             tmp[len + 0] = static_cast<char>( digit[0] );
@@ -245,7 +245,7 @@ namespace bchain {
                 return std::make_pair(dec, false);
             }
 
-            hash::hash256::digit_block digit;
+            hash::hash256::digest_block digit;
 
             auto body_len = dec.size( ) - 4;
 

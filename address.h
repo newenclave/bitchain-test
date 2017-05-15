@@ -50,7 +50,7 @@ namespace bchain { namespace address {
                 res.push_back( 0x01 );
             }
 
-            hash::hash256::digit_block digit;
+            hash::hash256::digest_block digit;
             hash::hash256::get( digit, res.c_str( ), res.size( ) );
             res.append( &digit[0], &digit[4] );
 
@@ -105,7 +105,7 @@ namespace bchain { namespace address {
                 return result_type(err("Invalid WIF. Bad version"));
             }
 
-            hash::sha256::digit_block digit;
+            hash::sha256::digest_block digit;
             size_t body_len = decoded.size( ) - 4;
             hash::hash256::get( digit, decoded.c_str( ), body_len );
 
@@ -148,7 +148,7 @@ namespace bchain { namespace address {
 
             hash::hash160::append( pub_bytes, len, res );
 
-            hash::hash256::digit_block digit;
+            hash::hash256::digest_block digit;
             hash::hash256::get( digit, res.c_str( ), res.size( ) );
             res.append( &digit[0], &digit[4] );
 

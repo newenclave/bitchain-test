@@ -13,38 +13,38 @@ namespace bchain { namespace hash {
     template <typename ParentHash, size_t DigitLen>
     struct common {
 
-        enum { digit_length = DigitLen };
+        enum { digest_length = DigitLen };
         using parent_type = ParentHash;
-        using digit_block = std::uint8_t[digit_length];
+        using digest_block = std::uint8_t[digest_length];
 
         template <typename U>
         static
         std::string get_string( const U *dat, size_t len )
         {
             auto data = reinterpret_cast<const std::uint8_t *>(dat);
-            digit_block dst;
+            digest_block dst;
             parent_type::get( dst, data, len * sizeof(U) );
-            return std::string(&dst[0], &dst[digit_length]);
+            return std::string(&dst[0], &dst[digest_length]);
         }
 
         template <typename U>
         static
         void append( const U *dat, size_t len, std::string &out )
         {
-            digit_block block;
+            digest_block block;
             parent_type::get( block, dat, len );
-            out.append( &block[0], &block[digit_length] );
+            out.append( &block[0], &block[digest_length] );
         }
 
         template <typename U>
         static
-        bool check( const U *dat, size_t len, const digit_block dst )
+        bool check( const U *dat, size_t len, const digest_block dst )
         {
             const std::uint8_t * data =
                     reinterpret_cast<const std::uint8_t *>(dat);
-            digit_block tmp;
+            digest_block tmp;
             get( tmp, data, len );
-            return (memcmp( dst, tmp, digit_length ) == 0);
+            return (memcmp( dst, tmp, digest_length ) == 0);
         }
     protected:
         common( ) = default;
@@ -52,12 +52,12 @@ namespace bchain { namespace hash {
 
     struct sha256: public common<sha256, SHA256_DIGEST_LENGTH> {
 
-        enum { digit_length = SHA256_DIGEST_LENGTH };
-        using digit_block = std::uint8_t[digit_length];
+        enum { digest_length = SHA256_DIGEST_LENGTH };
+        using digest_block = std::uint8_t[digest_length];
 
         template <typename U>
         static
-        void get( digit_block dst, const U *dat, size_t len )
+        void get( digest_block dst, const U *dat, size_t len )
         {
             const std::uint8_t * data =
                     reinterpret_cast<const std::uint8_t *>(dat);
@@ -71,12 +71,12 @@ namespace bchain { namespace hash {
 
     struct ripemd160: public common<ripemd160, RIPEMD160_DIGEST_LENGTH> {
 
-        enum { digit_length = RIPEMD160_DIGEST_LENGTH };
-        using digit_block = std::uint8_t[digit_length];
+        enum { digest_length = RIPEMD160_DIGEST_LENGTH };
+        using digest_block = std::uint8_t[digest_length];
 
         template <typename U>
         static
-        void get( digit_block dst, const U *dat, size_t len )
+        void get( digest_block dst, const U *dat, size_t len )
         {
             const std::uint8_t * data =
                     reinterpret_cast<const std::uint8_t *>(dat);
@@ -87,32 +87,32 @@ namespace bchain { namespace hash {
         }
     };
 
-    struct hash256: public common<hash256, sha256::digit_length> {
+    struct hash256: public common<hash256, sha256::digest_length> {
 
-        enum { digit_length = sha256::digit_length };
-        using digit_block = sha256::digit_block;
+        enum { digest_length = sha256::digest_length };
+        using digest_block = sha256::digest_block;
 
         template <typename U>
         static
-        void get( digit_block dst, const U *dat, size_t len )
+        void get( digest_block dst, const U *dat, size_t len )
         {
             sha256::get( dst, dat, len );
-            sha256::get( dst, dst, digit_length );
+            sha256::get( dst, dst, digest_length );
         }
     };
 
-    struct hash160: public common<hash160, ripemd160::digit_length> {
+    struct hash160: public common<hash160, ripemd160::digest_length> {
 
-        enum { digit_length = ripemd160::digit_length };
-        using digit_block   = ripemd160::digit_block;
+        enum { digest_length = ripemd160::digest_length };
+        using digest_block   = ripemd160::digest_block;
 
         template <typename U>
         static
-        void get( digit_block dst, const U *dat, size_t len )
+        void get( digest_block dst, const U *dat, size_t len )
         {
-            sha256::digit_block first_dst;
+            sha256::digest_block first_dst;
             sha256::get( first_dst, dat, len );
-            ripemd160::get( dst, first_dst, sha256::digit_length );
+            ripemd160::get( dst, first_dst, sha256::digest_length );
         }
     };
 

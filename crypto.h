@@ -11,6 +11,8 @@
 #include <memory>
 #include <random>
 
+#include "hash.h"
+
 #include "etool/details/result.h"
 
 namespace bchain { namespace crypto {
@@ -364,12 +366,21 @@ namespace bchain { namespace crypto {
 
         template <typename U>
         static
-        signature sign( const U  *mess, size_t len, EC_KEY *k )
+        signature sign( const U  *digest, size_t len, EC_KEY *k )
         {
-            auto data = reinterpret_cast<const std::uint8_t *>(mess);
+            auto data = reinterpret_cast<const std::uint8_t *>(digest);
             signature s( ECDSA_do_sign(data, len * sizeof(U), k) );
 
             return s;
+        }
+
+        template <typename U, typename HashT = hash::sha256>
+        static
+        signature hash_and_sign( const U  *mess, size_t len, EC_KEY *k )
+        {
+            typename HashT::digest_block digest;
+            HashT::get( digest, mess, len * sizeof(U) );
+            return sign( &digest[0], HashT::digest_length, k );
         }
 
         template <typename U>
@@ -379,12 +390,30 @@ namespace bchain { namespace crypto {
             return ECDSA_do_verify( data, len * sizeof(U), val_, k );
         }
 
+        template <typename U, typename HashT = hash::sha256>
+        int hash_and_verify( const U  *mess, size_t len, EC_KEY *k )
+        {
+            typename HashT::digest_block digest;
+            HashT::get( digest, mess, len * sizeof(U));
+            return ECDSA_do_verify( &digest[0], HashT::digest_length, val_, k );
+        }
+
         template <typename U>
         static
         int verify( const U  *mess, size_t len, ECDSA_SIG *sig, EC_KEY *k )
         {
             auto data = reinterpret_cast<const unsigned char *>(mess);
             return ECDSA_do_verify( data, len * sizeof(U), sig, k );
+        }
+
+        template <typename U, typename HashT = hash::sha256>
+        static
+        int hash_and_verify( const U  *mess, size_t len,
+                             ECDSA_SIG *sig, EC_KEY *k )
+        {
+            typename HashT::digest_block digest;
+            HashT::get( digest, mess, len * sizeof(U));
+            return ECDSA_do_verify( &digest[0], HashT::digest_length, sig, k );
         }
 
         std::string to_der( const EC_KEY *k ) const

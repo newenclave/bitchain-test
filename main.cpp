@@ -152,9 +152,10 @@ int main0( )
     k.set_conv_compressed( true );
     std::cout << hex(k.get_public_bytes( )) << "\n==============\n";
 
+    return 0;
 }
 
-int main( )
+int main1( )
 {
 
     auto k = crypto::ec_key::create_private(priv_bytes2, sizeof(priv_bytes2));
@@ -172,6 +173,16 @@ int main( )
     dump( k.get_private_bytes( ), std::cout << "Private: \n") << "\n";
 
     std::cout << k.get_conv_compressed( ) << "\n";
+
+    return 0;
+}
+
+int main3( )
+{
+    auto k = crypto::ec_key::create_private(priv_bytes, sizeof(priv_bytes));
+    auto sig = crypto::signature::sign( "Hello!", 6, k.get( ) );
+
+    std::cout << hex( sig.to_der( k.get( ) ) ) << "\n";
 
     return 0;
 }
@@ -208,23 +219,24 @@ int test_wif( )
     return 0;
 }
 
-int sign( )
+int main( )
 {
     //auto k = crypto::ec_key::generate( );
     auto k  = crypto::ec_key::create_private( priv_bytes, sizeof(priv_bytes) );
     auto pk = crypto::ec_key::create_public(  pub_bytes,  sizeof(pub_bytes) );
 
-    auto digest    = hash::sha256::get_string( message.c_str( ),
-                                               message.size( ) );
-    auto signature = crypto::signature::sign( digest.c_str( ),
-                                              digest.size( ), k.get( ) );
+    auto digest = hash::sha256::get_string( message.c_str( ),
+                                            message.size( ) );
+    auto signature = crypto::signature::hash_and_sign( message.c_str( ),
+                                              message.size( ), k.get( ) );
 
     auto der = signature.to_der( k.get( ) );
     auto sig = crypto::signature::from_der( der );
 
     dump(der, std::cout << "DER: \n") << "\n";
 
-    auto verified = sig.verify( digest.c_str( ), digest.size( ), pk.get( ) );
+    auto verified = sig.hash_and_verify( message.c_str( ),
+                                         message.size( ), pk.get( ) );
 
     std::cout << verified << "\n";
     dump(digest, std::cout << "SHA256: \n") << "\n";
