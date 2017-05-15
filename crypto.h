@@ -366,7 +366,7 @@ namespace bchain { namespace crypto {
         static
         signature sign( const U  *mess, size_t len, EC_KEY *k )
         {
-            auto data = reinterpret_cast<const unsigned char *>(mess);
+            auto data = reinterpret_cast<const std::uint8_t *>(mess);
             signature s( ECDSA_do_sign(data, len * sizeof(U), k) );
 
             return s;

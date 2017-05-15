@@ -154,8 +154,9 @@ int main0( )
 
 }
 
-int main1( )
+int main( )
 {
+
     auto k = crypto::ec_key::create_private(priv_bytes2, sizeof(priv_bytes2));
     //auto k = crypto::ec_key::create_public(pub_bytes, sizeof(pub_bytes));
 

@@ -111,7 +111,7 @@ namespace {
 
 }
 
-int main( )
+int main_s( )
 {
     return 0;
 }
