@@ -42,8 +42,40 @@ namespace {
             cont_.erase( cont_.begin( ), std::next(cont_.begin( ), count) );
         }
 
+        void read( byte *to, size_t count )
+        {
+            std::copy( cont_.begin( ), std::next(cont_.begin( ), count), to );
+        }
+
     private:
         std::deque<byte> cont_;
+    };
+
+    struct element {
+        virtual
+        void push( stack & ) const = 0;
+
+        virtual
+        void read( stack & ) = 0;
+
+        virtual
+        std::uint8_t code( ) const = 0;
+
+        virtual
+        std::string as_bytes( ) const = 0;
+
+        virtual
+        std::uint8_t  as_uint8( ) const = 0;
+
+        virtual
+        std::uint16_t as_uint16( ) const = 0;
+
+        virtual
+        std::uint32_t as_uint32( ) const = 0;
+
+        virtual
+        std::uint64_t as_uint64( ) const = 0;
+
     };
 
     template <typename T, op::code>
@@ -59,6 +91,18 @@ namespace {
             byte b[sizeof(T)];
             llbytes::write( val_, b );
             s.push( b[0], b[sizeof(T)] );
+        }
+
+        void read( stack &s )
+        {
+            byte b[sizeof(T)];
+            s.read( b, sizeof(T) );
+            val_ = llbytes::read( b );
+        }
+
+        void pop( stack &s )
+        {
+            s.pop( sizeof(T) );
         }
 
     private:
