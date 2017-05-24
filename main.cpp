@@ -120,6 +120,7 @@ namespace {
         return dumper::make<>::to_hex( in.c_str( ), in.size( ), ", ", "0x" );
     }
 
+    std::string bomz = "1DBqpfptUMizLDACvMVsrJFPdMtbgmZCk1";
 }
 
 
@@ -221,6 +222,12 @@ int test_wif( )
 
 int main( )
 {
+    auto res = base58::decode_check(bomz);
+
+    dumper::make<>::all(res.first.c_str( ), res.first.size( ), std::cout )
+            << res.second
+            << "\n";
+
     //auto k = crypto::ec_key::generate( );
     auto k  = crypto::ec_key::create_private( priv_bytes, sizeof(priv_bytes) );
     auto pk = crypto::ec_key::create_public(  pub_bytes,  sizeof(pub_bytes) );
