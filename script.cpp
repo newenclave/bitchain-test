@@ -11,6 +11,7 @@
 #include "crypto.h"
 
 #include "hash.h"
+#include "tx.h"
 
 namespace {
 
