@@ -421,7 +421,10 @@ namespace bchain { namespace crypto {
             auto t1 = ECDSA_size( k );
             std::string der( static_cast<size_t>(t1), '\0');
             auto der_copy = reinterpret_cast<std::uint8_t *>(&der[0]);
-            i2d_ECDSA_SIG( get( ), &der_copy );
+            auto res_len = i2d_ECDSA_SIG( get( ), &der_copy );
+            if( res_len >= 0 ) {
+                der.resize( static_cast<std::size_t>(res_len) );
+            }
             return der;
         }
 

@@ -65,7 +65,8 @@ HEADERS += \
     etool/include/etool/trees/trie/base.h \
     parser.h \
     etool/include/etool/details/result.h \
-    address.h
+    address.h \
+    tx.h
 
 INCLUDEPATH += etool/include
 

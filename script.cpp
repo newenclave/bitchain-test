@@ -262,6 +262,7 @@ int main_script( )
         0x8c, 0x39, 0x94, 0x75, 0xbf, 0x1e, 0x73, 0x8f,
         0x19, 0xdf, 0xc2, 0xdb, 0x11, 0xdb, 0x1d, 0x28
     };
+
     const std::string message = "This is a very confidential message\n";
     auto k  = crypto::ec_key::create_private( priv_bytes, sizeof(priv_bytes) );
     auto signature = crypto::signature::hash_and_sign( message.c_str( ),
@@ -271,6 +272,10 @@ int main_script( )
     auto ms = slices::memory<std::uint8_t>( pub_bytes, sizeof(pub_bytes) );
 
     auto r = standarts::P2PKH_in( der, ms );
+
+    auto out = dumper::make<>::to_hex( r.c_str( ), r.size( ), " ", "0x" );
+
+    std::cout << out << "\n";
 
     return 0;
 }
