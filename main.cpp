@@ -220,8 +220,12 @@ int test_wif( )
     return 0;
 }
 
+int main_script( );
+
 int main( )
 {
+    return main_script( );
+
     auto res = base58::decode_check(bomz);
 
     dumper::make<>::all(res.first.c_str( ), res.first.size( ), std::cout )
