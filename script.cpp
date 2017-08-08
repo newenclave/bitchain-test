@@ -78,7 +78,7 @@ namespace {
                     static_cast<std::size_t>(op::code::OP_PUSHDATA0);
             std::string res;
             if( val > var_size ) {
-                res.push_back( op::to_byte(op::code::OP_PUSHDATA1) );
+                res.push_back( op::to_char(op::code::OP_PUSHDATA1) );
             }
             res.push_back( static_cast<char>( val ) );
 

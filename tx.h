@@ -8,6 +8,7 @@
 
 #include "etool/details/byte_order.h"
 #include "etool/sizepack/blockchain_varint.h"
+#include "etool/details/byte_hex.h"
 
 namespace bchain { namespace tx {
 
