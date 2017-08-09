@@ -293,7 +293,6 @@ int main_script0( )
     tx::outpoint    outpoint;
     tx::transaction tx;
     std::size_t     msg_len;
-    tx::input       res_tx;
 
     const char msg_exp[] = "0100000001f3a27f485f9833c8318c490403307f"
                            "ef1397121b5dd8fe70777236e7371c4ef3000000"
@@ -339,7 +338,8 @@ int main_script0( )
     tx.serialize_to( tx::SIGHASH_NON, res );
 
     std::cout << "\n";
-    std::cout << etool::dumper::make<>::to_hex( res.c_str( ), res.size( ), "", " " )
+    std::cout << etool::dumper::make<>::to_hex( res.c_str( ), res.size( ),
+                                                "", "" )
               << "\n";
 
     return 0;
